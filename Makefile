@@ -3,13 +3,13 @@ CC = g++
 CPPFLAGS = -std=c++11 --coverage
 CXXFLAGS = -g -O0 -shared -fPIC
 
-LIBS = 
-INCLUDES = -I./include
+LIBS = -lcrypto
+INCLUDES = -I./pqcrypto
 
 EXECUTABLE = libpq.so
 
 SRC_DIR = src
-INCLUDE_DIR =include
+INCLUDE_DIR =pqcrypto
 DOC_DIR = docs
 
 SRCS = $(shell find $(SRC_DIR) -name "*.cpp")
@@ -31,22 +31,6 @@ all: $(OBJS)
 
 clean_test_files:
 	$(MAKE) -C tests veryclean
-
-# TODO do this in a proper way
-ARQ= $(shell uname -m)
-ifeq ($(ARQ), x86_64)
-LIBDIR=/lib64
-else
-LIBDIR=/lib
-endif
-PREFIX=/usr
-
-install: all 
-	@if test -z "$(DESTDIR)"; then echo "Please set DESTDIR"; exit 1; fi
-	mkdir -p $(DESTDIR)$(PREFIX)$(LIBDIR)
-	mkdir -p $(DESTDIR)$(PREFIX)/include/object-pkcs11
-	install -D $(EXECUTABLE) $(DESTDIR)$(PREFIX)$(LIBDIR)/$(EXECUTABLE) 
-	cp -r $(INCLUDE_DIR)/* $(DESTDIR)$(PREFIX)/include/object-pkcs11
 
 .PHONY: test
 test: all
