@@ -18,3 +18,9 @@ ByteArray AbstractDigest::evpDigestChain(ByteArray& data, const EVP_MD* md, cons
 	EVP_MD_CTX_free(ctx);
 	return ret;
 };
+
+std::vector<unsigned int> AbstractDigest::toBaseW(const ByteArray& hash, const unsigned int w) const {
+	//TODO(Perin): assert w and size is power of 2 and w | size 
+	std::vector<unsigned int> teste;
+	return teste;
+}

@@ -167,8 +167,3 @@ std::string ByteArray::toHex()
     return data;
 }
 
-std::vector<ByteArray> toBaseW() {
-	//TODO(perin) implementar basew winternitz
-	std::vector<ByteArray> teste;
-	return teste;
-}

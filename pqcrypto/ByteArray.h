@@ -28,7 +28,6 @@ public:
 	unsigned int size() const;
 	virtual std::string toString() noexcept;
 	virtual std::string toHex();
-	//virtual std::vector<ByteArray> toBaseW();
 };
 
 #endif
