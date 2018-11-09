@@ -17,7 +17,6 @@ public:
 	virtual ByteArray digest(ByteArray& data) const = 0;
 	virtual ByteArray digestChain(ByteArray& data, const unsigned int n) const = 0;
 	virtual const unsigned int getMdLen() const = 0;
-	virtual std::vector<unsigned int> toBaseW(const ByteArray& hash, const unsigned int w) const;
 
 	/**
 	* Returns the chained message digest using OpenSSL and Algorithm.

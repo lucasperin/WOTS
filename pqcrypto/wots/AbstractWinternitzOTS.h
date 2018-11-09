@@ -1,26 +1,25 @@
 #ifndef ABSTRACT_WINTERNITZ_OTS
 #define ABSTRACT_WINTERNITZ_OTS
 
-#include "OpenSSLDigest.h"
+#include "primitives/AbstractDigest.h"
 
 
-typedef int cardinality;
-typedef int length;
+template<class T, class Enable = void>
+class AbstractWinternitzOTS;
 
-template <typename T>
-class AbstractWinternitzOTS : private OpenSSLDigestAlgorithm<T> {
+template <class T>
+class AbstractWinternitzOTS 
+	<T, typename std::enable_if<std::is_base_of<AbstractDigest, T>::value>::type> 
+	: private std::decay<T>::type {
+
 public:
 	AbstractWinternitzOTS();
 	
-	virtual cardinality t();
-	virtual carcardinality t1();
-	virtual carcardinality t2();
-	virtual carlength w();
-	virtual carlength n();
-
-
-protected:
-	virtual void convertBaseW();
+	virtual int t();
+	virtual int t1();
+	virtual int t2();
+	virtual int w();
+	virtual int n();
 
 private:
 	virtual void init();
