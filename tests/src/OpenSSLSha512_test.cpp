@@ -42,3 +42,17 @@ TEST(OpenSSLSha512_test, hash_1k) {
 	char const * compare = "A1F54AB92FB57B436FBE2A1703650DCF30CF8D380B5E7BD660723E7B6923EA7EAD2A6B4024D3F1FF710E3BDCE1C9CE8F63D53F7BF0DBF21E2EC65FC456523C1C";
 	ASSERT_STREQ(h.toHex().c_str(), compare);
 }
+
+TEST(OpenSSLSha512_test, hash_1M) {
+	ASSERT_EXIT(
+		{
+			{
+				const std::string test = "test";
+				ByteArray data = ByteArray::fromString(test);
+				OpenSSLSha512 md;
+				ByteArray h = md.digestChain(data, 1000000);
+			}
+			exit(0);
+		},::testing::ExitedWithCode(0),".*");
+
+}

@@ -10,23 +10,13 @@ class AbstractWinternitzOTS;
 template <class T>
 class AbstractWinternitzOTS 
 	<T, typename std::enable_if<std::is_base_of<AbstractDigest, T>::value>::type> 
-	: private std::decay<T>::type {
+	: std::decay<T>::type {
 
 public:
-	AbstractWinternitzOTS();
-	
-	virtual int t();
-	virtual int t1();
-	virtual int t2();
-	virtual int w();
-	virtual int n();
-
-private:
-	virtual void init();
-
-	cardinality fingerprint_blocks;
-	cardinality checksum_blocks;
-	length block;
-	
+	virtual const unsigned int t() noexcept = 0;
+	virtual const unsigned int t1() noexcept = 0;
+	virtual const unsigned int t2() noexcept = 0;
+	virtual const unsigned int w() noexcept = 0;
+	virtual const unsigned int n() noexcept = 0;
 };
 #endif

@@ -45,7 +45,7 @@ latex:
 	$(MAKE) -C docs/latex
 
 clean: 
-	$(RM) -f $(SRC_DIR)/*.o
-	$(RM) -f $(SRC_DIR)/*.gc*
+	find $(SRC_DIR) -type f -name "*.o" -delete
+	find $(SRC_DIR) -type f -name "*.gc*" -delete
 	$(RM) -f $(EXECUTABLE)
 	$(RM) -rf $(DOC_DIR)

@@ -4,16 +4,13 @@
 
 
 class OpenSSLSha256 : public AbstractDigest {
-	public:
-	ByteArray digest(ByteArray& data) const;
-	ByteArray digestChain(ByteArray& data, const unsigned int n) const;
-	const unsigned int getMdLen() const;
+public:
+	virtual ByteArray digest(ByteArray& data) const;
+	virtual ByteArray digestChain(ByteArray& data, const unsigned int n) const;
+	virtual const unsigned int bitLen() const;
+	virtual const unsigned int len() const;
+protected:
+	virtual ByteArray evpDigestChain(ByteArray& data, const EVP_MD* md, const unsigned int n) const;
 };
-
-/**
- * Defines Sha256 as a good type
- */
-template<>
-struct DigestAlgorithm<OpenSSLSha256>;
 
 #endif

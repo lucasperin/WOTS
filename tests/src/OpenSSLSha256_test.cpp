@@ -43,3 +43,16 @@ TEST(OpenSSLSha256_test, hash_1k) {
 	ASSERT_STREQ(h.toHex().c_str(), compare);
 }
 
+TEST(OpenSSLSha256_test, hash_1M) {
+	ASSERT_EXIT(
+		{
+			{
+				const std::string test = "test";
+				ByteArray data = ByteArray::fromString(test);
+				OpenSSLSha256 md;
+				ByteArray h = md.digestChain(data, 1000000);
+			}
+			exit(0);
+		},::testing::ExitedWithCode(0),".*");
+
+}
