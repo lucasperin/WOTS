@@ -2,6 +2,7 @@
 #define ABSTRACT_WINTERNITZ_OTS
 
 #include "primitives/AbstractDigest.h"
+#include "ByteArray.h"
 
 
 template<class T, class Enable = void>
@@ -18,13 +19,15 @@ public:
 	virtual const unsigned int t2() const noexcept = 0;
 	virtual const unsigned int w() const noexcept = 0;
 	virtual const unsigned int n() const noexcept = 0;
-	virtual const std::vector<ByteArray> privateKey() = 0;
-	virtual const std::vector<ByteArray> publicKey() = 0;
-	virtual void loadPrivKey() = 0;
-	virtual void loadPubKey() = 0;
-	virtual void loadKeys() { loadPrivKey(); loadPubKey();};
+	virtual const ByteArray publicKey() = 0;
+	virtual void loadPrivateKey() = 0;
+	virtual void loadPublicKey() = 0;
+	virtual void loadKeys() { loadPrivateKey(); loadPublicKey();};
+	virtual const std::vector<ByteArray> sign(ByteArray& data) = 0;
+	virtual bool verify(ByteArray& data, std::vector<ByteArray>& signature) = 0;
 
 protected:
+	virtual const std::vector<ByteArray> privateKey() = 0;
 	enum State {
 		INITIALIZED = 1,
 		PRIV_KEY_LOADED = 2,

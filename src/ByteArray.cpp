@@ -111,6 +111,14 @@ ByteArray operator ^(const ByteArray& left, const ByteArray& right) noexcept
     return xored;
 }
 
+ByteArray operator +(const ByteArray& left, const ByteArray& right) noexcept
+{
+	ByteArray ret(left.length + right.length);
+    memcpy(ret.m_data, left.m_data, left.length);
+    memcpy(ret.m_data + left.length, right.m_data, right.length);
+    return ret;
+}
+
 void ByteArray::copyFrom(const unsigned char* d, unsigned int length)
 {
     if(this->m_data){ delete this->m_data; }

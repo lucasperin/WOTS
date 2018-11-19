@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 #include <primitives/OpenSSLSha256.h>
-#include <iostream>
 
 
 /**
@@ -13,7 +12,6 @@ TEST(OpenSSLSha256_test, simple_hashing) {
 	OpenSSLSha256 md;
 	ByteArray h = md.digest(data);
 	char const * compare = "9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08";
-	//std::cout << h.toHex() << std::endl;
 	ASSERT_STREQ(h.toHex().c_str(), compare);
 }
 

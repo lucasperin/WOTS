@@ -2,6 +2,7 @@
 #include "wots/Wots.h"
 #include "primitives/OpenSSLSha256.h"
 #include "primitives/OpenSSLSha512.h"
+#include <iostream>
 
 TEST(Wots_test, constructor_OpenSSLSha256) {
 	ASSERT_EXIT( {
@@ -36,7 +37,7 @@ TEST(Wots_test, params_16_OpenSSLSha256) {
 }
 
 TEST(Wots_test, params_default_OpenSSLSha256) {
-	Wots<OpenSSLSha256> wots(16);
+	Wots<OpenSSLSha256> wots;
 	ASSERT_EQ(wots.n(),  32);
 	ASSERT_EQ(wots.w(),  4);
 	ASSERT_EQ(wots.t(),  67);
@@ -74,7 +75,7 @@ TEST(Wots_test, params_any_OpenSSLSha256) {
 TEST(Wots_test, load_private_key_OpenSSLSha256) {
 	ASSERT_EXIT( {
 	Wots<OpenSSLSha256> wots(777);
-	wots.loadPrivKey();
+	wots.loadPrivateKey();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
@@ -85,4 +86,26 @@ TEST(Wots_test, load_keys_65536_OpenSSLSha256) {
 	wots.loadKeys();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
+}
+
+TEST(Wots_test, print_key) {
+	Wots<OpenSSLSha256> wots(777);
+	wots.loadKeys();
+
+	std::cout << " -- Public Key -- " << std::endl;
+	ByteArray pub = wots.publicKey();
+	std::cout << pub.toHex() << std::endl;
+}
+
+TEST(Wots_test, signature) {
+	Wots<OpenSSLSha256> wots;
+	wots.loadKeys();
+	ByteArray data = ByteArray::fromString("My document");
+	std::vector<ByteArray> sig = wots.sign(data);
+	/*
+	std::cout << "BEGIN SIGNATURE" << std::endl;
+	for(auto s : sig)
+		std::cout << s.toHex() << std::endl;
+	*/
+	ASSERT_EQ(wots.verify(data, sig), true);
 }

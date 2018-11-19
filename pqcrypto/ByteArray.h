@@ -24,6 +24,7 @@ public:
 	unsigned char& operator [](int pos);
 	unsigned char at(int pos) const;
 	friend ByteArray operator ^(const ByteArray& left, const ByteArray& right) noexcept;
+	friend ByteArray operator +(const ByteArray& left, const ByteArray& right) noexcept;
 	void copyFrom(const unsigned char* data, unsigned int length);
 	unsigned char* getDataPointer();
 	unsigned int size() const;
