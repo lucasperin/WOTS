@@ -10,13 +10,25 @@ class AbstractWinternitzOTS;
 template <class T>
 class AbstractWinternitzOTS 
 	<T, typename std::enable_if<std::is_base_of<AbstractDigest, T>::value>::type> 
-	: std::decay<T>::type {
+	: protected std::decay<T>::type {
 
 public:
-	virtual const unsigned int t() noexcept = 0;
-	virtual const unsigned int t1() noexcept = 0;
-	virtual const unsigned int t2() noexcept = 0;
-	virtual const unsigned int w() noexcept = 0;
-	virtual const unsigned int n() noexcept = 0;
+	virtual const unsigned int t() const noexcept = 0;
+	virtual const unsigned int t1() const noexcept = 0;
+	virtual const unsigned int t2() const noexcept = 0;
+	virtual const unsigned int w() const noexcept = 0;
+	virtual const unsigned int n() const noexcept = 0;
+	virtual const std::vector<ByteArray> privateKey() = 0;
+	virtual const std::vector<ByteArray> publicKey() = 0;
+	virtual void loadPrivKey() = 0;
+	virtual void loadPubKey() = 0;
+	virtual void loadKeys() { loadPrivKey(); loadPubKey();};
+
+protected:
+	enum State {
+		INITIALIZED = 1,
+		PRIV_KEY_LOADED = 2,
+		PUB_KEY_LOADED = 4,
+	};
 };
 #endif

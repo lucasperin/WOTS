@@ -159,8 +159,7 @@ std::vector<unsigned int> ByteArray::toBaseW(const unsigned int w) {
 		case 4	: return toBaseWSmall(2); break;
 		case 16	: return toBaseWSmall(4); break;
 		case 256: return toBaseWSmall(8); break;
-		case 65536: return toBaseWBig(16); break;
-
+		default: return toBaseWBig(16); break;
 	}
 	std::vector<unsigned int> dummy;
 	return dummy;

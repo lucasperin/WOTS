@@ -3,6 +3,7 @@ LIBOBJECT = ../libpq.so
 INCLUDES = -I. -I../pqcrypto
 CC = g++
 CPPFLAGS = -std=c++11 -DDEBUG --coverage
+#CPPFLAGS = -std=c++11 -Wall -Wextra  -Wstrict-aliasing -pedantic -fmax-errors=5 -Werror -Wunreachable-code -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused -Wno-variadic-macros -Wno-parentheses -fdiagnostics-show-option
 CXXFLAGS = -g -O0
 COVFLAGS = -fprofile-arcs -ftest-coverage -lgcov --coverage
 EXECUTABLE = test.out
