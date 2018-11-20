@@ -158,20 +158,13 @@ const std::vector<ByteArray> Wots<T>::sign(ByteArray& data) {
 	std::vector<unsigned int> blocks = fingerprint.toBaseW(block_max);
 	std::vector<unsigned int> cs = checksum(blocks);
 
-	/*
-	std::cout << blocks.size() << std::endl;
-	for(auto b : blocks)
-		std::cout << b << " ";
-	std::cout << std::endl;
-		
-	std::cout << cs.size() << std::endl;
-	for(auto c : cs)
-		std::cout << c << " ";
-	std::cout << std::endl;
-	*/
-	
-	for(long unsigned int i = 0; i < this->private_key.size(); i++)
+	for(long unsigned int i = 0; i < blocks.size(); i++){
 		signature.push_back(this->digestChain(private_key[i], blocks[i]));
+	}
+	for(long unsigned int i = blocks.size(); i < private_key.size(); i++) {
+		int a = i-blocks.size();
+		signature.push_back(this->digestChain(private_key[i], cs[a]));
+	}
 	
 	return signature;
 }
@@ -181,14 +174,19 @@ bool Wots<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
 	loadPublicKey();
 	ByteArray fingerprint = this->digest(data);
 	std::vector<unsigned int> blocks = fingerprint.toBaseW(block_max);
+	std::vector<unsigned int> cs = checksum(blocks);
 	ByteArray check;
 
-	for(long unsigned int i = 0; i < blocks.size(); i++)
-		check = check + this->digestChain(signature[i], block_max - 1 - blocks[i]);
+	for(long unsigned int i = 0; i < blocks.size(); i++) {
+		int remain = block_max - 1 -blocks[i];
+		check = check + this->digestChain(signature[i], remain);
+	}
+	for(long unsigned int i = blocks.size(); i < private_key.size(); i++) {
+		int a = i-blocks.size();
+		check = check + this->digestChain(signature[i], block_max - 1 - cs[a]);
+	}
 
 	check = this->digest(check);
-
-	std::cout << check.toHex() << std::endl;
 	
 	if( public_key.toHex().compare(check.toHex()) == 0 )
 		return true;
@@ -204,7 +202,16 @@ const std::vector<unsigned int> Wots<T>::checksum(std::vector<unsigned int>& blo
 		sum += block_max -1 - b;
 	std::stringstream ss;
 	ss << std::hex << sum;
-	return ByteArray::fromHex(ss.str()).toBaseW(block_max);
+	std::vector<unsigned int> ret = ByteArray::fromHex(ss.str()).toBaseW(block_max);
+	int rm = ret.size() - this->t2();
+	if(rm > 0) {
+		ret.erase(ret.begin(), ret.begin()+rm);
+	}
+	if(rm < 0) {
+		std::vector<unsigned int> aux(abs(rm), 0);
+		ret.insert(ret.begin(), aux.begin(), aux.end());
+	}
+	return ret;
 }
 #endif
 

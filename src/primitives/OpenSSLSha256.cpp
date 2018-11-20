@@ -17,6 +17,8 @@ const unsigned int OpenSSLSha256::len() const {
 };
 
 ByteArray OpenSSLSha256::evpDigestChain(ByteArray& data, const EVP_MD* md, const unsigned int n) const {
+	if(n <= 0)
+		return data;
 	//Check for null ctx 
 	//TODO(perin) wrap around safe block n> 1?'
 	EVP_MD_CTX* ctx = EVP_MD_CTX_new();

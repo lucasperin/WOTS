@@ -97,15 +97,47 @@ TEST(Wots_test, print_key) {
 	std::cout << pub.toHex() << std::endl;
 }
 
-TEST(Wots_test, signature) {
-	Wots<OpenSSLSha256> wots;
+TEST(Wots_test, sign_4_OpenSSLSha256) {
+	Wots<OpenSSLSha256> wots(4);
 	wots.loadKeys();
 	ByteArray data = ByteArray::fromString("My document");
 	std::vector<ByteArray> sig = wots.sign(data);
-	/*
-	std::cout << "BEGIN SIGNATURE" << std::endl;
-	for(auto s : sig)
-		std::cout << s.toHex() << std::endl;
-	*/
+}
+
+TEST(Wots_test, sign_and_verify_4_OpenSSLSha256) {
+	Wots<OpenSSLSha256> wots(4);
+	wots.loadKeys();
+	ByteArray data = ByteArray::fromString("My document");
+	std::vector<ByteArray> sig = wots.sign(data);
+	ASSERT_EQ(wots.verify(data, sig), true);
+}
+
+TEST(Wots_test, sign_16_OpenSSLSha256) {
+	Wots<OpenSSLSha256> wots(16);
+	wots.loadKeys();
+	ByteArray data = ByteArray::fromString("My document");
+	std::vector<ByteArray> sig = wots.sign(data);
+}
+
+TEST(Wots_test, sign_and_verify_16_OpenSSLSha256) {
+	Wots<OpenSSLSha256> wots(16);
+	wots.loadKeys();
+	ByteArray data = ByteArray::fromString("My document");
+	std::vector<ByteArray> sig = wots.sign(data);
+	ASSERT_EQ(wots.verify(data, sig), true);
+}
+
+TEST(Wots_test, sign_256_OpenSSLSha256) {
+	Wots<OpenSSLSha256> wots(256);
+	wots.loadKeys();
+	ByteArray data = ByteArray::fromString("My document");
+	std::vector<ByteArray> sig = wots.sign(data);
+}
+
+TEST(Wots_test, sign_and_verify_256_OpenSSLSha256) {
+	Wots<OpenSSLSha256> wots(256);
+	wots.loadKeys();
+	ByteArray data = ByteArray::fromString("My document");
+	std::vector<ByteArray> sig = wots.sign(data);
 	ASSERT_EQ(wots.verify(data, sig), true);
 }
