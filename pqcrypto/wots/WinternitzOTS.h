@@ -1,15 +1,15 @@
-#ifndef ABSTRACT_WINTERNITZ_OTS
-#define ABSTRACT_WINTERNITZ_OTS
+#ifndef WINTERNITZ_OTS
+#define WINTERNITZ_OTS
 
 #include "primitives/AbstractDigest.h"
 #include "ByteArray.h"
 
 
 template<class T, class Enable = void>
-class AbstractWinternitzOTS;
+class WinternitzOTS;
 
 template <class T>
-class AbstractWinternitzOTS 
+class WinternitzOTS 
 	<T, typename std::enable_if<std::is_base_of<AbstractDigest, T>::value>::type> 
 	: protected std::decay<T>::type {
 

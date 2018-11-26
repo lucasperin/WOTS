@@ -1,18 +1,18 @@
-#ifndef WOTS
-#define WOTS
+#ifndef CLASSIC_WOTS
+#define CLASSIC_WOTS
 
 #include <cmath>
 #include <sstream>
-#include "wots/AbstractWinternitzOTS.h"
+#include "wots/WinternitzOTS.h"
 //TODO(Perin): Test EXPECT template T not base of AbstractDigest compilation error!
 
 template <class T>
-class Wots : public  AbstractWinternitzOTS<T> {
+class ClassicWots : public  WinternitzOTS<T> {
 public:
-	Wots() noexcept;
-	Wots(unsigned int w) noexcept;
-	Wots(unsigned int w, const ByteArray& seed) noexcept;
-	~Wots() noexcept;
+	ClassicWots() noexcept;
+	ClassicWots(unsigned int w) noexcept;
+	ClassicWots(unsigned int w, const ByteArray& seed) noexcept;
+	~ClassicWots() noexcept;
 	virtual const unsigned int t() const noexcept;
 	virtual const unsigned int t1() const noexcept;
 	virtual const unsigned int t2() const noexcept;
@@ -43,13 +43,13 @@ protected:
 };
 
 template <class T>
-Wots<T>::Wots() noexcept : Wots(16) {}
+ClassicWots<T>::ClassicWots() noexcept : ClassicWots(16) {}
 
 template <class T>
-Wots<T>::Wots(unsigned int w) noexcept : Wots(w, ByteArray::fromHex("01020304FFFF")) {}
+ClassicWots<T>::ClassicWots(unsigned int w) noexcept : ClassicWots(w, ByteArray::fromHex("01020304FFFF")) {}
 
 template <class T>
-Wots<T>::Wots(unsigned int w, const ByteArray& seed) noexcept : block_max(w) {
+ClassicWots<T>::ClassicWots(unsigned int w, const ByteArray& seed) noexcept : block_max(w) {
 	switch(w){
 		case(4): block_size = 2; break;
 		case(16): block_size = 4; break;
@@ -60,69 +60,69 @@ Wots<T>::Wots(unsigned int w, const ByteArray& seed) noexcept : block_max(w) {
 			break;
 	}
 	private_seed = seed;
-	current_state = Wots::INITIALIZED;
+	current_state = ClassicWots::INITIALIZED;
 }
 
 template <class T>
-Wots<T>::~Wots() noexcept {}
+ClassicWots<T>::~ClassicWots() noexcept {}
 
 template <class T>
-const unsigned int Wots<T>::t() const noexcept 
+const unsigned int ClassicWots<T>::t() const noexcept 
 {
 	return t1()+t2();
 }
 
 template <class T>
-const unsigned int Wots<T>::t1() const noexcept {
+const unsigned int ClassicWots<T>::t1() const noexcept {
 	return this->bitLen()/block_size;
 }
 
 template <class T>
-const unsigned int Wots<T>::t2() const noexcept {
+const unsigned int ClassicWots<T>::t2() const noexcept {
 	float u = log2(t1()*(block_max-1));
 	return (const unsigned int) floor(u/block_size) + 1;
 }
 
 template <class T>
-const unsigned int Wots<T>::w() const noexcept {
+const unsigned int ClassicWots<T>::w() const noexcept {
 	return this->block_size;
 }
 
 template <class T>
-const unsigned int Wots<T>::n() const noexcept {
+const unsigned int ClassicWots<T>::n() const noexcept {
 	return this->len();
 }
 
 template <class T>
-const std::vector<ByteArray> Wots<T>::privateKey(){
+const std::vector<ByteArray> ClassicWots<T>::privateKey(){
 	loadPrivateKey();
 	return this->private_key;
 }
 
 template <class T>
-const ByteArray Wots<T>::publicKey() {
+const ByteArray ClassicWots<T>::publicKey() {
 	loadPublicKey();
 	return this->public_key;
 }
 
 template <class T>
-void Wots<T>::loadPrivateKey() {
+void ClassicWots<T>::loadPrivateKey() {
 	if(not this->privKeyIsLoaded()) {
 		genPrivateKey();
-		current_state += Wots::PRIV_KEY_LOADED;
+		current_state += ClassicWots::PRIV_KEY_LOADED;
 	}
 }
 
 template <class T>
-void Wots<T>::loadPublicKey() {
+void ClassicWots<T>::loadPublicKey() {
 	if(not this->pubKeyIsLoaded()) {
 		genPublicKey();
-		current_state += Wots::PUB_KEY_LOADED;
+		current_state += ClassicWots::PUB_KEY_LOADED;
 	}
 }
 
 template <class T>
-void Wots<T>::genPrivateKey(){
+void ClassicWots<T>::genPrivateKey(){
 	const unsigned int key_len = t();
 	for(unsigned int i = 0; i < key_len; i++) {
 		//TODO(Perin): Use PRF and SEED;
@@ -131,7 +131,7 @@ void Wots<T>::genPrivateKey(){
 }
 
 template <class T>
-void Wots<T>::genPublicKey() {
+void ClassicWots<T>::genPublicKey() {
 	loadPrivateKey();
 	ByteArray pub;
 	const unsigned int S = block_max - 1;
@@ -141,17 +141,17 @@ void Wots<T>::genPublicKey() {
 }
 
 template <class T>
-bool Wots<T>::privKeyIsLoaded() {
-	return (current_state & Wots::PRIV_KEY_LOADED) > 0;
+bool ClassicWots<T>::privKeyIsLoaded() {
+	return (current_state & ClassicWots::PRIV_KEY_LOADED) > 0;
 }
 
 template <class T>
-bool Wots<T>::pubKeyIsLoaded() {
-	return (current_state & Wots::PUB_KEY_LOADED) > 0;
+bool ClassicWots<T>::pubKeyIsLoaded() {
+	return (current_state & ClassicWots::PUB_KEY_LOADED) > 0;
 }
 
 template<class T>
-const std::vector<ByteArray> Wots<T>::sign(ByteArray& data) {
+const std::vector<ByteArray> ClassicWots<T>::sign(ByteArray& data) {
 	loadPrivateKey();
 	std::vector<ByteArray> signature;
 	ByteArray fingerprint = this->digest(data);
@@ -170,7 +170,7 @@ const std::vector<ByteArray> Wots<T>::sign(ByteArray& data) {
 }
 
 template<class T>
-bool Wots<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
+bool ClassicWots<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
 	loadPublicKey();
 	ByteArray fingerprint = this->digest(data);
 	std::vector<unsigned int> blocks = fingerprint.toBaseW(block_max);
@@ -195,7 +195,7 @@ bool Wots<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
 }
 
 template<class T>
-const std::vector<unsigned int> Wots<T>::checksum(std::vector<unsigned int>& blocks){
+const std::vector<unsigned int> ClassicWots<T>::checksum(std::vector<unsigned int>& blocks){
 	std::vector<unsigned int> checksum;
 	int sum = 0;
 	for(auto &b : blocks)
