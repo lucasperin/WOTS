@@ -36,6 +36,10 @@ clean_test_files:
 test: all
 	$(MAKE) -C tests test
 
+.PHONY: bench
+bench: all
+	$(MAKE) -C benchmark test
+
 cleantest: clean_test_files test
 
 commitcheck: clean cleantest clean

@@ -20,6 +20,5 @@ public:
 	virtual const unsigned int timedPriveteKeyGeneration() const noexcept;
 	virtual void ();
 	virtual void loadPublicKey();
-
 };
 #endif
