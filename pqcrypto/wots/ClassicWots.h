@@ -18,27 +18,18 @@ public:
 	virtual const unsigned int t2() const noexcept;
 	virtual const unsigned int w() const noexcept;
 	virtual const unsigned int n() const noexcept;
-	virtual const ByteArray publicKey();
-	virtual void loadPrivateKey();
-	virtual void loadPublicKey();
 	virtual const std::vector<ByteArray> sign(ByteArray& data);
 	virtual bool verify(ByteArray& data, std::vector<ByteArray>& signature);
 
 protected:
-	virtual const std::vector<ByteArray> privateKey();
 	virtual void genPrivateKey();
 	virtual void genPublicKey();
-	virtual bool privKeyIsLoaded();
-	virtual bool pubKeyIsLoaded();
 	virtual const std::vector<unsigned int> checksum(std::vector<unsigned int>& blocks);
 
 	//Attributes
-	unsigned int current_state;
 	unsigned int block_size;
 	unsigned int block_max;
-	std::vector<ByteArray> private_key;
 	ByteArray private_seed;
-	ByteArray public_key;
 
 };
 
@@ -60,7 +51,6 @@ ClassicWots<T>::ClassicWots(unsigned int w, const ByteArray& seed) noexcept : bl
 			break;
 	}
 	private_seed = seed;
-	current_state = ClassicWots::INITIALIZED;
 }
 
 template <class T>
@@ -94,45 +84,17 @@ const unsigned int ClassicWots<T>::n() const noexcept {
 }
 
 template <class T>
-const std::vector<ByteArray> ClassicWots<T>::privateKey(){
-	loadPrivateKey();
-	return this->private_key;
-}
-
-template <class T>
-const ByteArray ClassicWots<T>::publicKey() {
-	loadPublicKey();
-	return this->public_key;
-}
-
-template <class T>
-void ClassicWots<T>::loadPrivateKey() {
-	if(not this->privKeyIsLoaded()) {
-		genPrivateKey();
-		current_state += ClassicWots::PRIV_KEY_LOADED;
-	}
-}
-
-template <class T>
-void ClassicWots<T>::loadPublicKey() {
-	if(not this->pubKeyIsLoaded()) {
-		genPublicKey();
-		current_state += ClassicWots::PUB_KEY_LOADED;
-	}
-}
-
-template <class T>
 void ClassicWots<T>::genPrivateKey(){
 	const unsigned int key_len = t();
 	for(unsigned int i = 0; i < key_len; i++) {
 		//TODO(Perin): Use PRF and SEED;
-		private_key.push_back(this->digest(private_seed));
+		this->private_key.push_back(this->digest(private_seed));
 	}
 }
 
 template <class T>
 void ClassicWots<T>::genPublicKey() {
-	loadPrivateKey();
+	this->loadPrivateKey();
 	ByteArray pub;
 	const unsigned int S = block_max - 1;
 	for(long unsigned int i = 0; i < this->private_key.size(); i++)
@@ -140,30 +102,19 @@ void ClassicWots<T>::genPublicKey() {
 	this->public_key = this->digest(pub);
 }
 
-template <class T>
-bool ClassicWots<T>::privKeyIsLoaded() {
-	return (current_state & ClassicWots::PRIV_KEY_LOADED) > 0;
-}
-
-template <class T>
-bool ClassicWots<T>::pubKeyIsLoaded() {
-	return (current_state & ClassicWots::PUB_KEY_LOADED) > 0;
-}
-
 template<class T>
 const std::vector<ByteArray> ClassicWots<T>::sign(ByteArray& data) {
-	loadPrivateKey();
 	std::vector<ByteArray> signature;
 	ByteArray fingerprint = this->digest(data);
 	std::vector<unsigned int> blocks = fingerprint.toBaseW(block_max);
 	std::vector<unsigned int> cs = checksum(blocks);
 
 	for(long unsigned int i = 0; i < blocks.size(); i++){
-		signature.push_back(this->digestChain(private_key[i], blocks[i]));
+		signature.push_back(this->digestChain(this->private_key[i], blocks[i]));
 	}
-	for(long unsigned int i = blocks.size(); i < private_key.size(); i++) {
+	for(long unsigned int i = blocks.size(); i < this->private_key.size(); i++) {
 		int a = i-blocks.size();
-		signature.push_back(this->digestChain(private_key[i], cs[a]));
+		signature.push_back(this->digestChain(this->private_key[i], cs[a]));
 	}
 	
 	return signature;
@@ -171,7 +122,8 @@ const std::vector<ByteArray> ClassicWots<T>::sign(ByteArray& data) {
 
 template<class T>
 bool ClassicWots<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
-	loadPublicKey();
+	if(not this->pubKeyIsLoaded())
+		return false;
 	ByteArray fingerprint = this->digest(data);
 	std::vector<unsigned int> blocks = fingerprint.toBaseW(block_max);
 	std::vector<unsigned int> cs = checksum(blocks);
@@ -181,14 +133,14 @@ bool ClassicWots<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) 
 		int remain = block_max - 1 -blocks[i];
 		check = check + this->digestChain(signature[i], remain);
 	}
-	for(long unsigned int i = blocks.size(); i < private_key.size(); i++) {
+	for(long unsigned int i = blocks.size(); i < this->private_key.size(); i++) {
 		int a = i-blocks.size();
 		check = check + this->digestChain(signature[i], block_max - 1 - cs[a]);
 	}
 
 	check = this->digest(check);
 	
-	if( public_key.toHex().compare(check.toHex()) == 0 )
+	if( this->public_key.toHex().compare(check.toHex()) == 0 )
 		return true;
 
 	return false;

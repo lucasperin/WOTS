@@ -32,6 +32,8 @@ test:	all
 	@echo 'Done!'
 
 clean:
-	rm -rf ./$(SRC_DIR)/*.o ./$(SRC_DIR)/*.gc* $(EXECUTABLE) *.gc*
+	rm -f $(EXECUTABLE)
+	find $(SRC_DIR) -type f -name "*.o" -delete
+	find $(SRC_DIR) -type f -name "*.gc*" -delete
 
 

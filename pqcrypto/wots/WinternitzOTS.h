@@ -14,24 +14,62 @@ class WinternitzOTS
 	: protected std::decay<T>::type {
 
 public:
-	virtual const unsigned int t() const noexcept = 0;
-	virtual const unsigned int t1() const noexcept = 0;
-	virtual const unsigned int t2() const noexcept = 0;
-	virtual const unsigned int w() const noexcept = 0;
-	virtual const unsigned int n() const noexcept = 0;
-	virtual const ByteArray publicKey() = 0;
-	virtual void loadPrivateKey() = 0;
-	virtual void loadPublicKey() = 0;
-	virtual void loadKeys() { loadPrivateKey(); loadPublicKey();};
+	WinternitzOTS() {
+		this->current_state = WinternitzOTS::INITIALIZED;
+	}
+
+	virtual const ByteArray publicKey(){
+		loadPublicKey();
+		return this->public_key;
+	};
+
+	virtual const std::vector<ByteArray> privateKey() {
+		loadPrivateKey();
+		return this->private_key;
+	};
+	
+	virtual void loadPrivateKey() {
+		if(not this->privKeyIsLoaded()) {
+			this->genPrivateKey();
+			current_state += WinternitzOTS::PRIV_KEY_LOADED;
+		}
+	};
+	
+	virtual void loadPublicKey() {
+		if(not this->pubKeyIsLoaded()) {
+			this->genPublicKey();
+			current_state += WinternitzOTS::PUB_KEY_LOADED;
+		}
+	};
+	
+	virtual void loadKeys() { 
+		loadPrivateKey(); 
+		loadPublicKey();
+	};
+	
 	virtual const std::vector<ByteArray> sign(ByteArray& data) = 0;
 	virtual bool verify(ByteArray& data, std::vector<ByteArray>& signature) = 0;
 
 protected:
-	virtual const std::vector<ByteArray> privateKey() = 0;
+	virtual void genPrivateKey() = 0;
+	virtual void genPublicKey() = 0;
+	
+	virtual bool privKeyIsLoaded() {
+		return (current_state & WinternitzOTS::PRIV_KEY_LOADED) > 0;
+	};
+	
+	virtual bool pubKeyIsLoaded() {
+		return (current_state & WinternitzOTS::PUB_KEY_LOADED) > 0;
+	};
+	
 	enum State {
 		INITIALIZED = 1,
 		PRIV_KEY_LOADED = 2,
 		PUB_KEY_LOADED = 4,
 	};
+
+	unsigned int current_state;
+	ByteArray public_key;
+	std::vector<ByteArray> private_key;
 };
 #endif

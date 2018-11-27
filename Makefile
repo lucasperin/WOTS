@@ -29,9 +29,6 @@ all: $(OBJS)
 	@echo 'Build complete!'
 	@echo ' '
 
-clean_test_files:
-	$(MAKE) -C tests veryclean
-
 .PHONY: test
 test: all
 	$(MAKE) -C tests test
@@ -39,8 +36,6 @@ test: all
 .PHONY: bench
 bench: all
 	$(MAKE) -C benchmark test
-
-cleantest: clean_test_files test
 
 commitcheck: clean cleantest clean
 
@@ -53,3 +48,11 @@ clean:
 	find $(SRC_DIR) -type f -name "*.gc*" -delete
 	$(RM) -f $(EXECUTABLE)
 	$(RM) -rf $(DOC_DIR)
+
+clean_test:
+	$(MAKE) -C tests clean
+
+clean_bench:
+	$(MAKE) -C benchmark clean
+
+veryclean: clean clean_test clean_bench
