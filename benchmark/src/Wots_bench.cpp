@@ -3,111 +3,120 @@
 #include "primitives/OpenSSLSha256.h"
 #include "primitives/OpenSSLSha512.h"
 
-/* Benchmarking constructor to obtain performance impact on the following tests. */
-template<class T>
-static void Constructor(benchmark::State& state) {
+
+/* SIGNATURE AND VERIFICATION */
+template<class OTS>
+class OTSFixture : public benchmark::Fixture {
+public:
+	ByteArray data;
+	std::vector<ByteArray> signature;
+	OTS* ots;
+	virtual void SetUp(benchmark::State& state) {
+		ots = new OTS(state.range(0));
+		data = ByteArray::fromString("My document");
+		ots->loadKeys();
+		signature = ots->sign(this->data);
+	}
+	virtual void TearDown(benchmark::State& state) {
+		delete ots;
+	}
+};
+
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, SIGNATURE_256, ClassicWots<OpenSSLSha256>)(benchmark::State& state) {
 	for (auto _ : state){
-		T wots(state.range(0));
-		benchmark::DoNotOptimize(wots);
-		benchmark::ClobberMemory();
+		this->ots->sign(this->data);
+	}
+}
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, SIGNATURE_512, ClassicWots<OpenSSLSha512>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->sign(this->data);
 	}
 }
 
-/* GENERATE PRIVATE KEY */
-template<class T>
-static void PRIVATE_KEY_gen(benchmark::State& state) {
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, VERIFICATION_256, ClassicWots<OpenSSLSha256>)(benchmark::State& state) {
 	for (auto _ : state){
-		T wots(state.range(0));
-		wots.loadPrivateKey();
+		this->ots->verify(this->data, this->signature);
+	}
+}
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, VERIFICATION_512, ClassicWots<OpenSSLSha512>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->verify(this->data, this->signature);
 	}
 }
 
-/* GENERATE PUBLIC KEY (PRIVETEKEY TIME IS INCLUDED)*/
-template<class T>
-static void PUBLIC_KEY_gen(benchmark::State& state) {
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, GEN_KEY_256, ClassicWots<OpenSSLSha256>)(benchmark::State& state) {
 	for (auto _ : state){
-		T wots(state.range(0));
-		wots.loadPublicKey();
+		this->ots->clearKeys();
+		this->ots->loadPrivateKey();
 	}
 }
 
-extern ByteArray data = ByteArray::fromString("My document");
-//extern WinternitzOTS* global_wots;
-
-
-
-
-/* SIGN SMALL DATA */
-template<class T>
-static void SIGN_small(benchmark::State& state) {
-		T wots(state.range(0));
-		wots.loadKeys();
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, GEN_KEY_512, ClassicWots<OpenSSLSha512>)(benchmark::State& state) {
 	for (auto _ : state){
-//		global_wots = new T(state.range(0));
-//		global_wots->loadKeys();
-//		global_wots->sign(data);
-		wots.sign(data);
+		this->ots->clearKeys();
+		this->ots->loadPrivateKey();
 	}
 }
 
-/* SIGN AND VERIFYSMALL DATA */
-template<class T>
-static void VERIFY_small(benchmark::State& state) {
-		T wots(state.range(0));
-		wots.loadKeys();
-		std::vector<ByteArray> sig = wots.sign(data);
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, PRIVATE_GEN_KEY_256, ClassicWots<OpenSSLSha256>)(benchmark::State& state) {
 	for (auto _ : state){
-		wots.verify(data, sig);
+		this->ots->clearPrivateKey();
+		this->ots->loadPrivateKey();
 	}
 }
 
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, PRIVATE_GEN_KEY_512, ClassicWots<OpenSSLSha512>)(benchmark::State& state) {
+	for (auto _ : state){
+			this->ots->clearPrivateKey();
+		this->ots->loadPrivateKey();
+	}
+}
 
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, PUBLIC_GEN_KEY_256, ClassicWots<OpenSSLSha256>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->clearPublicKey();
+		this->ots->loadPublicKey();
+	}
+}
+
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, PUBLIC_GEN_KEY_512, ClassicWots<OpenSSLSha512>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->clearPublicKey();
+		this->ots->loadPublicKey();
+	}
+}
 /* Register test function order */
 
-/* 
-// Uncomment this block to obtain constructor times
-BENCHMARK_TEMPLATE(Constructor, ClassicWots<OpenSSLSha256>)->Arg(4)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(Constructor, ClassicWots<OpenSSLSha256>)->Arg(16)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(Constructor, ClassicWots<OpenSSLSha256>)->Arg(256)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(Constructor, ClassicWots<OpenSSLSha512>)->Arg(4)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(Constructor, ClassicWots<OpenSSLSha512>)->Arg(16)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(Constructor, ClassicWots<OpenSSLSha512>)->Arg(256)->Unit(benchmark::kMicrosecond);
-*/
+
+BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_256)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_256)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_256)->Arg(256)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PUBLIC_GEN_KEY_256)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PUBLIC_GEN_KEY_256)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PUBLIC_GEN_KEY_256)->Arg(256)->Unit(benchmark::kMicrosecond);
+
+BENCHMARK_REGISTER_F(OTSFixture, SIGNATURE_256)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, SIGNATURE_256)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, SIGNATURE_256)->Arg(256)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_256)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_256)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_256)->Arg(256)->Unit(benchmark::kMicrosecond);
+
+BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_512)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_512)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_512)->Arg(256)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PUBLIC_GEN_KEY_512)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PUBLIC_GEN_KEY_512)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, PUBLIC_GEN_KEY_512)->Arg(256)->Unit(benchmark::kMicrosecond);
+
+BENCHMARK_REGISTER_F(OTSFixture, SIGNATURE_512)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, SIGNATURE_512)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, SIGNATURE_512)->Arg(256)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_512)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_512)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_512)->Arg(256)->Unit(benchmark::kMicrosecond);
 
 
-//KEY GEN
-BENCHMARK_TEMPLATE(PRIVATE_KEY_gen, ClassicWots<OpenSSLSha256>)->Arg(4)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(PUBLIC_KEY_gen, ClassicWots<OpenSSLSha256>)->Arg(4)->Unit(benchmark::kMicrosecond);
 
-BENCHMARK_TEMPLATE(PRIVATE_KEY_gen, ClassicWots<OpenSSLSha256>)->Arg(16)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(PUBLIC_KEY_gen, ClassicWots<OpenSSLSha256>)->Arg(16)->Unit(benchmark::kMicrosecond);
-
-BENCHMARK_TEMPLATE(PRIVATE_KEY_gen, ClassicWots<OpenSSLSha256>)->Arg(256)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(PUBLIC_KEY_gen, ClassicWots<OpenSSLSha256>)->Arg(256)->Unit(benchmark::kMicrosecond);
-
-BENCHMARK_TEMPLATE(PRIVATE_KEY_gen, ClassicWots<OpenSSLSha512>)->Arg(4)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(PUBLIC_KEY_gen, ClassicWots<OpenSSLSha512>)->Arg(4)->Unit(benchmark::kMicrosecond);
-
-BENCHMARK_TEMPLATE(PRIVATE_KEY_gen, ClassicWots<OpenSSLSha512>)->Arg(16)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(PUBLIC_KEY_gen, ClassicWots<OpenSSLSha512>)->Arg(16)->Unit(benchmark::kMicrosecond);
-
-BENCHMARK_TEMPLATE(PRIVATE_KEY_gen, ClassicWots<OpenSSLSha512>)->Arg(256)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(PUBLIC_KEY_gen, ClassicWots<OpenSSLSha512>)->Arg(256)->Unit(benchmark::kMicrosecond);
-
-//SIGN
-BENCHMARK_TEMPLATE(SIGN_small, ClassicWots<OpenSSLSha256>)->Arg(4)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(SIGN_small, ClassicWots<OpenSSLSha256>)->Arg(16)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(SIGN_small, ClassicWots<OpenSSLSha256>)->Arg(256)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(SIGN_small, ClassicWots<OpenSSLSha512>)->Arg(4)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(SIGN_small, ClassicWots<OpenSSLSha512>)->Arg(16)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(SIGN_small, ClassicWots<OpenSSLSha512>)->Arg(256)->Unit(benchmark::kMicrosecond);
-
-//VERIFY
-BENCHMARK_TEMPLATE(VERIFY_small, ClassicWots<OpenSSLSha256>)->Arg(4)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(VERIFY_small, ClassicWots<OpenSSLSha256>)->Arg(16)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(VERIFY_small, ClassicWots<OpenSSLSha256>)->Arg(256)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(VERIFY_small, ClassicWots<OpenSSLSha512>)->Arg(4)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(VERIFY_small, ClassicWots<OpenSSLSha512>)->Arg(16)->Unit(benchmark::kMicrosecond);
-BENCHMARK_TEMPLATE(VERIFY_small, ClassicWots<OpenSSLSha512>)->Arg(256)->Unit(benchmark::kMicrosecond);
 
 BENCHMARK_MAIN();

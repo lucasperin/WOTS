@@ -31,14 +31,14 @@ public:
 	virtual void loadPrivateKey() {
 		if(not this->privKeyIsLoaded()) {
 			this->genPrivateKey();
-			current_state += WinternitzOTS::PRIV_KEY_LOADED;
+			this->current_state += WinternitzOTS::PRIV_KEY_LOADED;
 		}
 	};
 	
 	virtual void loadPublicKey() {
 		if(not this->pubKeyIsLoaded()) {
 			this->genPublicKey();
-			current_state += WinternitzOTS::PUB_KEY_LOADED;
+			this->current_state += WinternitzOTS::PUB_KEY_LOADED;
 		}
 	};
 	
@@ -47,6 +47,26 @@ public:
 		loadPublicKey();
 	};
 	
+	virtual void clearPrivateKey() {
+		if(this->privKeyIsLoaded()) {
+			this->private_key.clear();
+			this->current_state -= WinternitzOTS::PRIV_KEY_LOADED;
+		}
+	};
+	
+	virtual void clearPublicKey() {
+		if(this->pubKeyIsLoaded()) {
+			this->public_key = ByteArray();
+			this->current_state -= WinternitzOTS::PUB_KEY_LOADED;
+		}
+	};
+
+	virtual void clearKeys() {
+		this->private_key.clear();
+		this->public_key = ByteArray();
+		this->current_state = WinternitzOTS::INITIALIZED;
+	};
+
 	virtual const std::vector<ByteArray> sign(ByteArray& data) = 0;
 	virtual bool verify(ByteArray& data, std::vector<ByteArray>& signature) = 0;
 
