@@ -24,6 +24,16 @@ TEST(ByteArray_test, constructor_negative) {
 	},::testing::KilledBySignal(SIGSEGV),".*");
 }
 
+TEST(ByteArray_test, toBin) {
+	ByteArray data = ByteArray::fromHex("0");
+	ASSERT_STREQ(data.toBin().c_str(), "00000000");
+	data = ByteArray::fromHex("0F");
+	ASSERT_STREQ(data.toBin().c_str(), "00001111");
+	data = ByteArray::fromHex("69");
+	ASSERT_STREQ(data.toBin().c_str(), "01101001");
+	data = ByteArray::fromHex("6F09");
+	ASSERT_STREQ(data.toBin().c_str(), "0110111100001001");
+}
 
 TEST(ByteArray_test, base_4) {
 	const std::string test = "12348C5A";
@@ -60,5 +70,7 @@ TEST(ByteArray_test, base_16) {
 TEST(ByteArray_test, DISABLED_base_65536) {
 	FAIL() << "NOT IMPLEMENTED";
 }
+
+
 
 

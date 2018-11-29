@@ -30,6 +30,7 @@ public:
 	unsigned int size() const;
 	virtual std::string toString() noexcept;
 	virtual std::string toHex();
+	virtual std::string toBin();
 	std::vector<unsigned int> toBaseW(const unsigned int w);
 protected:
 	std::vector<unsigned int> toBaseWSmall(const unsigned int w);

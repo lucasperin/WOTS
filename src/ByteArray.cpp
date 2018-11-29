@@ -1,5 +1,12 @@
 #include <ByteArray.h>
 
+const char *bit_rep[16] = {
+    [ 0] = "0000", [ 1] = "0001", [ 2] = "0010", [ 3] = "0011",
+    [ 4] = "0100", [ 5] = "0101", [ 6] = "0110", [ 7] = "0111",
+    [ 8] = "1000", [ 9] = "1001", [10] = "1010", [11] = "1011",
+    [12] = "1100", [13] = "1101", [14] = "1110", [15] = "1111",
+};
+
 ByteArray::ByteArray() noexcept
 {
     this->m_data = NULL;
@@ -159,6 +166,23 @@ std::string ByteArray::toHex()
     hex_data[j] = '\0';
 	data = hex_data;
 	delete[] hex_data;
+    return data;
+}
+
+std::string ByteArray::toBin()
+{
+	std::string data;
+    char *bin_data = new char[this->length*8 +1];
+
+    int j = 0;
+    for(unsigned int i = 0; i < this->length; i++)
+    {
+		sprintf(&bin_data[j], "%s%s", bit_rep[this->m_data[i] >> 4], bit_rep[this->m_data[i] & 0x0F]);
+		j+=8;
+    }
+    bin_data[j] = '\0';
+	data = bin_data;
+	delete[] bin_data;
     return data;
 }
 

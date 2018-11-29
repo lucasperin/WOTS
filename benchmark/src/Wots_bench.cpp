@@ -1,5 +1,6 @@
 #include <benchmark/benchmark.h>
 #include "wots/ClassicWots.h"
+#include "wots/RunLengthOTS.h"
 #include "primitives/OpenSSLSha256.h"
 #include "primitives/OpenSSLSha512.h"
 
@@ -16,6 +17,26 @@ public:
 		data = ByteArray::fromString("My document");
 		ots->loadKeys();
 		signature = ots->sign(this->data);
+	}
+	virtual void TearDown(benchmark::State& state) {
+		delete ots;
+	}
+};
+
+template<class OTS>
+class OTSFixture2 : public benchmark::Fixture {
+public:
+	ByteArray data;
+	std::vector<ByteArray> signature;
+	OTS* ots;
+	ByteArray fp;
+	virtual void SetUp(benchmark::State& state) {
+		ots = new OTS();
+		data = ByteArray::fromString("My document");
+		ots->loadKeys();
+		signature = ots->sign(this->data);
+		OpenSSLSha256 md;
+		fp = md.digest(data);
 	}
 	virtual void TearDown(benchmark::State& state) {
 		delete ots;
@@ -87,6 +108,52 @@ BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture, PUBLIC_GEN_KEY_512, ClassicWots<OpenSSLS
 }
 /* Register test function order */
 
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture2, RunLengthOTS_SIGNATURE_256, RunLengthOTS<OpenSSLSha256>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->sign(this->data);
+	}
+}
+
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture2, RunLengthOTS_VERIFICATION_256, RunLengthOTS<OpenSSLSha256>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->verify(this->data, this->signature);
+	}
+}
+
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture2, RunLengthOTS_GEN_KEY_256, RunLengthOTS<OpenSSLSha256>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->clearKeys();
+		this->ots->loadPrivateKey();
+	}
+}
+
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture2, RunLengthOTS_PRIVATE_GEN_KEY_256, RunLengthOTS<OpenSSLSha256>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->clearPrivateKey();
+		this->ots->loadPrivateKey();
+	}
+}
+
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture2, RunLengthOTS_PUBLIC_GEN_KEY_256, RunLengthOTS<OpenSSLSha256>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots->clearPublicKey();
+		this->ots->loadPublicKey();
+	}
+}
+
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture2, RunLengthOTS_Encode, RunLengthOTS<OpenSSLSha256>)(benchmark::State& state) {
+	std::pair<std::vector<unsigned int>, unsigned int> a;
+	for (auto _ : state){
+		benchmark::DoNotOptimize(a = this->ots->encodeRunLength(fp));
+	}
+}
+
+BENCHMARK_TEMPLATE_DEFINE_F(OTSFixture2, RunLengthOTS_BaseW, RunLengthOTS<OpenSSLSha256>)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		benchmark::DoNotOptimize(a = fp.toBaseW(state.range(0)));
+	}
+}
 
 BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_256)->Arg(4)->Unit(benchmark::kMicrosecond);
 BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_256)->Arg(16)->Unit(benchmark::kMicrosecond);
@@ -102,6 +169,7 @@ BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_256)->Arg(4)->Unit(benchmark::kMic
 BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_256)->Arg(16)->Unit(benchmark::kMicrosecond);
 BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_256)->Arg(256)->Unit(benchmark::kMicrosecond);
 
+/*
 BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_512)->Arg(4)->Unit(benchmark::kMicrosecond);
 BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_512)->Arg(16)->Unit(benchmark::kMicrosecond);
 BENCHMARK_REGISTER_F(OTSFixture, PRIVATE_GEN_KEY_512)->Arg(256)->Unit(benchmark::kMicrosecond);
@@ -115,7 +183,16 @@ BENCHMARK_REGISTER_F(OTSFixture, SIGNATURE_512)->Arg(256)->Unit(benchmark::kMicr
 BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_512)->Arg(4)->Unit(benchmark::kMicrosecond);
 BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_512)->Arg(16)->Unit(benchmark::kMicrosecond);
 BENCHMARK_REGISTER_F(OTSFixture, VERIFICATION_512)->Arg(256)->Unit(benchmark::kMicrosecond);
+*/
 
+BENCHMARK_REGISTER_F(OTSFixture2, RunLengthOTS_PRIVATE_GEN_KEY_256)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture2, RunLengthOTS_PUBLIC_GEN_KEY_256)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture2, RunLengthOTS_SIGNATURE_256)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture2, RunLengthOTS_VERIFICATION_256)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture2, RunLengthOTS_Encode)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture2, RunLengthOTS_BaseW)->Arg(4)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture2, RunLengthOTS_BaseW)->Arg(16)->Unit(benchmark::kMicrosecond);
+BENCHMARK_REGISTER_F(OTSFixture2, RunLengthOTS_BaseW)->Arg(256)->Unit(benchmark::kMicrosecond);
 
 
 
