@@ -1,8 +1,12 @@
 # WOTS
 WOTS implementations for fun and experiments
 
-The goal is to have a reliable and fast implementation that
-I can benchmark using a few modifications to the algorithm.
+The goal is to have a valid and fast implementation of the Winternitz OTS so that
+I can benchmark and easily modify/extend the algorithms.
+
+Mainly, the library will contain a classical WOTS implementation with some
+other variations available in the literature. The second goal will be to
+implement tree-based algorithms (such as XMSS) and parallel hashes with SIMD.
 
 # Security Remark
 
@@ -10,21 +14,19 @@ Do not attempt to use this for cryptographic purposes. This
 implementation does not take any security common practices
 into consideration.
 
-# Build Requirements
-- GNU MP
-- openMP
+# Build 
 
-# Build Command
+
+*Requires OpenSSL*
+
+Later I will be adding avx (will require compatible intel processor) and OpenMP 
+
 ```
-gcc -ggdb main.c -lcrypto -Wall -DPARALLEL -fopenmp -lgmp && time ./a.out
+make
+make test
+make bench
 ```
 
-- PARALLEL is a flag to run the computations of each iteration over the
-signature key (or the signature) using multiple cores with OpenMP.
-
-- -fopenmp is required even without PARALLEL flag, due to benchmark
-outputs I have placed in the code. I use `omp_get_wtime()` to get
-better precision than `clock()` when using multiple cores.
-
-- ggdb is for debugging with gdb
+The benchmark and test applications are available with their own makefiles
+and require to have `libgtest` and `libbenchmark` (from  Google).
 
