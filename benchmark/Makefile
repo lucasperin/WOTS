@@ -1,9 +1,8 @@
 LIBOBJECT = ../libpq.so
-
-INCLUDES = -I. -I../pqcrypto
 CC = g++
+INCLUDES = -I. -I../pqcrypto
 CPPFLAGS = -std=c++11 -DDEBUG --coverage
-CXXFLAGS = -g -O0
+CXXFLAGS = -g -O3 -Wall
 COVFLAGS = -fprofile-arcs -ftest-coverage -lgcov --coverage
 EXECUTABLE = test.out
 LIBS = -pthread -lbenchmark $(LIBOBJECT)
@@ -13,7 +12,7 @@ OBJS += $(TEST_SRCS:.cpp=.o)
 
 %.o: %.cpp
 	@echo 'Building file: $<'
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -O0 -Wall -c -o "$@" "$<"
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

@@ -1,7 +1,7 @@
-SHELL = /bin/bash
+SHELL ?= /bin/bash
 CC = g++
-CPPFLAGS = -std=c++11 --coverage
-CXXFLAGS = -g -O0 -shared -fPIC
+CPPFLAGS += -std=c++11
+CXXFLAGS += -O3 -shared -fPIC -Wall
 
 LIBS = -lcrypto
 INCLUDES = -I./pqcrypto
@@ -20,7 +20,7 @@ RM = rm
 %.o: %.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC Compiler'
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -O0 -Wall -c -o "$@" "$<" $(LIBS)
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o "$@" "$<" $(LIBS)
 	@echo 'Finished building: $<'
 	@echo ' '
 

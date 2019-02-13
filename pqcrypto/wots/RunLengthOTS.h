@@ -11,12 +11,16 @@ public:
 	RunLengthOTS() noexcept;
 	RunLengthOTS(unsigned int r_min, unsigned int r_max) noexcept;
 	RunLengthOTS(unsigned int r_min, unsigned int r_max, const ByteArray seed) noexcept;
+	virtual ~RunLengthOTS() noexcept;
 	virtual const unsigned int rMin();
 	virtual const unsigned int rMax();
 	virtual const unsigned int l();
 	virtual const std::vector<ByteArray> sign(ByteArray& data);
 	virtual bool verify(ByteArray& data, std::vector<ByteArray>& signature);
 	std::pair<std::vector<unsigned int>, unsigned int> encodeRunLength(ByteArray& fingerprint);
+	//special functions to RunLength including R to signature
+	const std::pair<std::vector<ByteArray>, int> sign2(ByteArray& data);
+	bool verify(ByteArray& data, std::vector<ByteArray>& signature, int R);
 
 protected:
 	virtual void genPrivateKey();
@@ -42,6 +46,9 @@ RunLengthOTS<T>::RunLengthOTS(unsigned int r_min, unsigned int r_max, const Byte
 	this->l_max = (unsigned int) floor( log2(this->bitLen()) -1 );
 	this->private_seed = seed;
 };
+
+template <class T>
+RunLengthOTS<T>::~RunLengthOTS() noexcept {}
 
 template <class T>
 const unsigned int RunLengthOTS<T>::rMin() {
@@ -84,6 +91,35 @@ const std::vector<ByteArray> RunLengthOTS<T>::sign(ByteArray& data) {
 }
 
 template <class T>
+const std::pair<std::vector<ByteArray>, int> RunLengthOTS<T>::sign2(ByteArray& data) {
+	std::vector<ByteArray> signature;
+
+	int R = 1;
+	ByteArray randomized = ByteArray::fromString(std::to_string(R)) + data;
+	ByteArray fingerprint = this->digest(randomized);
+	std::pair<std::vector<unsigned int>, unsigned int> blocks = encodeRunLength(fingerprint);
+
+	while( !((blocks.second <= l_max) && (blocks.first.size() >= r_min) 
+			&& (blocks.first.size() <= r_max)) ){
+		R++;
+		randomized = ByteArray::fromString(std::to_string(R)) + data;
+		fingerprint = this->digest(randomized);
+		blocks = encodeRunLength(fingerprint);
+	}
+
+	for(long unsigned int i = 0; i < blocks.first.size(); i++){
+		signature.push_back(this->digestChain(this->private_key[i], l_max - blocks.first[i]));
+	}
+	for(long unsigned int i = blocks.first.size(); i < this->r_max; i++) {
+		signature.push_back(this->digestChain(this->private_key[i], l_max - 1));
+	}
+
+	std::pair<std::vector<ByteArray>, int> ret(signature, R);
+
+	return ret;
+}
+
+template <class T>
 bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
 	if(not this->pubKeyIsLoaded())
 		return false;
@@ -95,6 +131,29 @@ bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature)
 		fingerprint = this->digest(fingerprint);
 		blocks = encodeRunLength(fingerprint);
 	}
+
+	ByteArray check;
+	for(long unsigned int i = 0; i < blocks.first.size(); i++){
+		check = check + this->digestChain(signature[i], blocks.first[i]);
+	}
+	for(long unsigned int i = blocks.first.size(); i < this->r_max; i++) {
+		check = check + this->digestChain(signature[i], 1);
+	}
+
+	check = this->digest(check);
+	
+	if( this->public_key.toHex().compare(check.toHex()) == 0 )
+		return true;
+	return false;
+}
+
+template <class T>
+bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature, int R) {
+	if(not this->pubKeyIsLoaded())
+		return false;
+	ByteArray randomized = ByteArray::fromString(std::to_string(R)) + data;
+	ByteArray fingerprint = this->digest(randomized);
+	std::pair<std::vector<unsigned int>, unsigned int> blocks = encodeRunLength(fingerprint);
 
 	ByteArray check;
 	for(long unsigned int i = 0; i < blocks.first.size(); i++){

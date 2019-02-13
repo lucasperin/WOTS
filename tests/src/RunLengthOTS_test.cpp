@@ -90,3 +90,11 @@ TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha512) {
 	ASSERT_EQ(ots.verify(data, sig), true);
 }
 */
+
+TEST(RunLengthOTS_test, sign_and_verify_R_OpenSSLSha256) {
+	RunLengthOTS<OpenSSLSha256> ots;
+	ots.loadKeys();
+	ByteArray data = ByteArray::fromString("My document");
+	std::pair<std::vector<ByteArray>,int> sig = ots.sign2(data);
+	ASSERT_EQ(ots.verify(data, sig.first, sig.second), true);
+}

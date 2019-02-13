@@ -12,7 +12,7 @@ public:
 	ClassicWots() noexcept;
 	ClassicWots(unsigned int w) noexcept;
 	ClassicWots(unsigned int w, const ByteArray& seed) noexcept;
-	~ClassicWots() noexcept;
+	virtual ~ClassicWots() noexcept;
 	virtual const unsigned int t() const noexcept;
 	virtual const unsigned int t1() const noexcept;
 	virtual const unsigned int t2() const noexcept;
