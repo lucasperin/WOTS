@@ -78,35 +78,33 @@ def average_chance(p):
     return 1/p
 
 
-w = 2**16
-mu = 32774
-std = 4730
+if __name__ == "__main__":
 
+    w = 2**16
+    mu = 32774
+    std = 4730
 
+    print("mean = %d"%(mu))
+    print("std = %d"%(std))
+    mui = mu*1.2
 
+    print("For 20 increase, mean = %f"%(mui))
+    z = r_to_z(mui,mu,std)
+    print("%d to z = %f)"%(mui, z))
+    p = complementary_cumulative(z)
+    print("p( mu > %d ) = %f"%(mui, p))
+    print("In average, event will occur after %f trials"%(average_chance(p)))
+    print("The event will occur at least once, with 95 chance, after %d trials"%(at_least_one_with_prob(p, 0.95)))
+    print("The event will occur at least once, with 99 chance, after %d trials"%(at_least_one_with_prob(p, 0.99)))
 
-print("mean = %d"%(mu))
-print("std = %d"%(std))
-mui = mu*1.2
-
-
-print("For 20 increase, mean = %f"%(mui))
-z = r_to_z(mui,mu,std)
-print("%d to z = %f)"%(mui, z))
-p = complementary_cumulative(z)
-print("p( mu > %d ) = %f"%(mui, p))
-print("In average, event will occur after %f trials"%(average_chance(p)))
-print("The event will occur at least once, with 95 chance, after %d trials"%(at_least_one_with_prob(p, 0.95)))
-print("The event will occur at least once, with 99 chance, after %d trials"%(at_least_one_with_prob(p, 0.99)))
-
-print("\n ================= \n")
-mui = mu*1.50
-print("For 20 increase, mean = %f"%(mui))
-z = r_to_z(mui,mu,std)
-print("%d to z = %f)"%(mui, z))
-p = complementary_cumulative(z)
-print("p( mu > %d ) = %f"%(mui, p))
-print("In average, event will occur after %f trials"%(average_chance(p)))
-print("The event will occur at least once, with 95 chance, after %d trials"%(at_least_one_with_prob(p, 0.95)))
-print("The event will occur at least once, with 99 chance, after %d trials"%(at_least_one_with_prob(p, 0.99)))
+    print("\n ================= \n")
+    mui = mu*1.30
+    print("For 30 increase, mean = %f"%(mui))
+    z = r_to_z(mui,mu,std)
+    print("%d to z = %f)"%(mui, z))
+    p = complementary_cumulative(z)
+    print("p( mu > %d ) = %f"%(mui, p))
+    print("In average, event will occur after %f trials"%(average_chance(p)))
+    print("The event will occur at least once, with 95 chance, after %d trials"%(at_least_one_with_prob(p, 0.95)))
+    print("The event will occur at least once, with 99 chance, after %d trials"%(at_least_one_with_prob(p, 0.99)))
 
