@@ -1,16 +1,19 @@
 #ifndef SHA256
 #define SHA256
-#include "primitives/AbstractDigest.h"
+#include "primitives/AbstractOpenSSLDigest.h"
 
-
-class OpenSSLSha256 : public AbstractDigest {
+class OpenSSLSha256 : public AbstractOpenSSLDigest {
 public:
-	virtual ByteArray digest(ByteArray& data) const;
-	virtual ByteArray digestChain(ByteArray& data, const unsigned int n) const;
-	virtual const unsigned int bitLen() const;
-	virtual const unsigned int len() const;
+	const unsigned int bitLen() const noexcept {
+		return 256; 
+	};
+	const unsigned int len() const noexcept {
+		return 32;
+	};
 protected:
-	virtual ByteArray evpDigestChain(ByteArray& data, const EVP_MD* md, const unsigned int n) const;
+	const EVP_MD* algorithm() const noexcept {
+		return EVP_sha256();
+	};
 };
 
 #endif

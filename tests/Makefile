@@ -7,7 +7,7 @@ CPPFLAGS = -std=c++11 -DDEBUG --coverage
 CXXFLAGS = -g -O0
 COVFLAGS = -fprofile-arcs -ftest-coverage -lgcov --coverage
 EXECUTABLE = test.out
-LIBS = -pthread -lgtest $(LIBOBJECT)
+LIBS = -pthread -lgtest -lcrypto $(LIBOBJECT)
 SRC_DIR = src
 TEST_SRCS += $(wildcard $(SRC_DIR)/*.cpp)
 OBJS += $(TEST_SRCS:.cpp=.o)
