@@ -98,7 +98,7 @@ if __name__ == "__main__":
     print("The event will occur at least once, with 99 chance, after %d trials"%(at_least_one_with_prob(p, 0.99)))
 
     print("\n ================= \n")
-    mui = mu*1.30
+    mui = mu*1.435
     print("For 30 increase, mean = %f"%(mui))
     z = r_to_z(mui,mu,std)
     print("%d to z = %f)"%(mui, z))

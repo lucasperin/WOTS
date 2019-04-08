@@ -104,17 +104,20 @@ void ClassicWots<T>::genPublicKey() {
 
 template<class T>
 const std::vector<ByteArray> ClassicWots<T>::sign(ByteArray& data) {
-	std::vector<ByteArray> signature;
 	ByteArray fingerprint = this->digest(data);
 	std::vector<unsigned int> blocks = fingerprint.toBaseW(block_max);
 	std::vector<unsigned int> cs = checksum(blocks);
+	std::vector<ByteArray> signature(blocks.size() + cs.size());
 
+	//#pragma omp parallel for
 	for(long unsigned int i = 0; i < blocks.size(); i++){
-		signature.push_back(this->digestChain(this->private_key[i], blocks[i]));
+		signature[i] = this->digestChain(this->private_key[i], blocks[i]);
 	}
+
+	//#pragma omp parallel for
 	for(long unsigned int i = blocks.size(); i < this->private_key.size(); i++) {
 		int a = i-blocks.size();
-		signature.push_back(this->digestChain(this->private_key[i], cs[a]));
+		signature[i] = this->digestChain(this->private_key[i], cs[a]);
 	}
 	
 	return signature;
@@ -127,15 +130,24 @@ bool ClassicWots<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) 
 	ByteArray fingerprint = this->digest(data);
 	std::vector<unsigned int> blocks = fingerprint.toBaseW(block_max);
 	std::vector<unsigned int> cs = checksum(blocks);
+	std::vector<ByteArray> check_vector(blocks.size() + cs.size());
 	ByteArray check;
 
+	//#pragma omp parallel for
 	for(long unsigned int i = 0; i < blocks.size(); i++) {
 		int remain = block_max - 1 -blocks[i];
-		check = check + this->digestChain(signature[i], remain);
+		check_vector[i] = this->digestChain(signature[i], remain);
+		//check = check + this->digestChain(signature[i], remain);
 	}
+
+	//#pragma omp parallel for
 	for(long unsigned int i = blocks.size(); i < this->private_key.size(); i++) {
 		int a = i-blocks.size();
-		check = check + this->digestChain(signature[i], block_max - 1 - cs[a]);
+		check_vector[i] = this->digestChain(signature[i], block_max - 1 - cs[a]);
+	}
+
+	for(long unsigned int i = 0; i < check_vector.size(); i++) {
+		check = check + check_vector[i];
 	}
 
 	check = this->digest(check);

@@ -1,9 +1,9 @@
 SHELL ?= /bin/bash
-CC = g++
+CC = g++ -fopenmp
 CPPFLAGS += -std=c++11
 CXXFLAGS += -O3 -shared -fPIC -Wall
 
-LIBS = -lcrypto
+LIBS = -lcrypto 
 INCLUDES = -I./pqcrypto
 
 EXECUTABLE = libpq.so

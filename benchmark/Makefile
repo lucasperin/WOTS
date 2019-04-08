@@ -1,5 +1,5 @@
 LIBOBJECT = ../libpq.so
-CC = g++
+CC = g++ -fopenmp
 INCLUDES = -I. -I../pqcrypto
 CPPFLAGS = -std=c++11 -DDEBUG --coverage
 CXXFLAGS = -g -O3 -Wall
