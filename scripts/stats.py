@@ -108,3 +108,43 @@ if __name__ == "__main__":
     print("The event will occur at least once, with 95 chance, after %d trials"%(at_least_one_with_prob(p, 0.95)))
     print("The event will occur at least once, with 99 chance, after %d trials"%(at_least_one_with_prob(p, 0.99)))
 
+    print("\n ================= \n")
+
+    moment1 = 0
+    p = 1/(2**16)
+    for i in range(2**16):
+        moment1 +=(i*p)
+    moment2 = 0
+    for i in range(2**16):
+        moment2 +=(i**2)*p
+    print(moment1, moment2, sqrt(moment2), sqrt(moment2)-moment1)
+
+    first_central=0
+    for i in range(2**16):
+        first_central += (i-moment1)*p
+
+    print(first_central)
+
+    second_central=0
+    for i in range(2**16):
+        second_central += ((i-first_central)**2)*p
+    print(second_central, sqrt(second_central))
+
+    print("==============")
+    m = 0
+    p = 1/(2**16)
+    for i in range(2**16):
+        m +=(i**2 - i)
+    print(p*m, sqrt(p*m))
+
+    print("\n ================= \n")
+
+    moment1 = 0
+    p = 1/(2**16)
+    for i in range(2**16):
+        moment1 +=(i*p)
+    moment2 = 0
+    for i in range(2**16):
+        moment2 +=(i**2)*p
+    print(sqrt(moment2- moment1**2))
+

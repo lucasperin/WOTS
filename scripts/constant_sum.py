@@ -1,4 +1,4 @@
-from math import factorial as fac, sqrt, floor
+from math import factorial as fac, sqrt, floor, log
 from functools import reduce
 
 """
@@ -10,6 +10,7 @@ def binomial(n, k):
     Binomial computed with factorial
     n >= k >= 0
     """
+    if n<0 or k <0 or n-k<0: return 0
     return fac(n)/(fac(k)*fac(n-k))
 
 
@@ -26,7 +27,7 @@ def original_T_len(blocks, maxi):
     """
     return binomial(maxi + blocks -1, maxi)
 
-def T_len(blocks, maxi, block_sum=0):
+def T_len(blocks, maxi, block_sum = None):
     """
     New equation for |T_{t,w}|, if block_sum is not given, will assume 
     original behavior with maxi = block_sum
@@ -35,10 +36,61 @@ def T_len(blocks, maxi, block_sum=0):
     @param block_sum is the sum of the blocks
     TODO: Assert maxi <= block_sum?
     """
-    if block_sum == 0: block_sum = maxi
+    if block_sum is None: block_sum = maxi
     kmax = min(blocks, floor(block_sum/(maxi+1)))
     return reduce(lambda t, k: t + binomial(blocks,k)*binomial(block_sum-(maxi+1)*k+blocks-1,blocks-1 )*(-1)**k, [0] + list(range(0,kmax+1)))
 
+def original_bk(k, blocks,maxi):
+    """
+    Original Bk algorithm, returning boundries for mapping integers
+    into constant sum blocks
+    @param blocks is the number of blocks the map has
+    @param maxi is the largest integer inside a block (0, ..., maxi)
+    """
+    assert(k>=0)
+    if k is 0: return 0
+    return original_bk(k-1, blocks,maxi)+T_len(blocks-1, k-1)
+
+def bj(j, blocks, maxi, block_sum = None):
+    """
+    New Bk algorithm, returning boundries for mapping integers
+    into constant sum blocks
+    @param blocks is the number of blocks the map has
+    @param maxi is the largest integer inside a block (0, ..., maxi)
+    @param block_sum is the sum of the blocks
+    """
+    assert(j>=0)
+    if block_sum is None: block_sum = maxi
+    kmax = min(blocks, floor(block_sum/(maxi+1)))
+    return reduce(lambda t, k: t + binomial(blocks,k)*
+            (
+            binomial(block_sum-(maxi+1)*k+blocks,blocks)
+            - binomial(block_sum-(maxi+1)*k+blocks-1-j,blocks)
+            )*(-1)**k, [0] + list(range(0,kmax+1)))
+
+def original_map_to_const_sum(i, blocks, maxi):
+    if blocks is 1: return [maxi]
+    k = 0
+    a = 1
+    bleft = 0
+    bright = original_bk(k+1, blocks,maxi)
+    while( not (i >= bleft and i < bright)):
+        k = k + 1
+        bleft=bright
+        bright = original_bk(k+1, blocks,maxi)
+    return [maxi-k] + original_map_to_const_sum(i-bleft, blocks-1,k)
+
+def map_to_const_sum(i, blocks, maxi, block_sum=None):
+    if block_sum is None: block_sum = maxi
+    if blocks is 1: return [block_sum]
+    k = 0
+    bleft = 0
+    bright = T_len(blocks-1, maxi, block_sum)
+    while( not (i >= bleft and i < bright)):
+        k = k + 1
+        bleft=bright
+        bright += T_len(blocks-1,maxi,block_sum-k)
+    return [k] + map_to_const_sum(i-bleft,blocks-1,maxi,block_sum-(k))
 
 def test_sum_equals_maxi(func):
     assert(func(1,0) == 1)
@@ -62,15 +114,48 @@ def test_sum_larger_than_maxi(func):
     assert(func(20,0,0) == 1)
     assert(func(3,3,9) == 1)
     assert(func(3,3,6) == 10)
-
-
+    assert(reduce(lambda x,y: x+func(2,3,y), [0] + list(range(3,7))) == 10)
+    assert(func(3,3,8) == 3)
+    assert(reduce(lambda x,y: x+func(2,3,y), [0] + list(range(5,9))) == 3)
     assert(func(20,10,20) == 68785126410)
-    #assert(reduce(lambda x,y: x+func(19,y,20), [0] + list(range(0,11))) == 68785126410)
+    assert(reduce(lambda x,y: x+func(19,10,y), [0] + list(range(10,21))) == 68785126410)
 
 if __name__ == '__main__':
+    print(T_len(2,6,9))
+    print(T_len(1,6,9))
+    print(T_len(1,6,8))
+    print(T_len(1,6,7))
+    print(T_len(1,6,6))
+    print(T_len(1,6,5))
+    print(T_len(1,6,4))
+    print(T_len(1,6,3))
+    print(T_len(1,6,2))
+    print(T_len(1,6,1))
 
-    print(T_len(3,3,6))
-    print(reduce(lambda x,y: x+T_len(2,y,6), [0] + list(range(0,4))))
+    #print(bk(3,3,3, 1))
+    #print(bk(3,3,3, 2))
+    #print(bk(3,3,3, 3))
+    #print(bk(3,3,3, 4))
+    blocks = 3
+    maxi = 3
+    block_sum = 3
+    print()
+    print(bj(1, blocks, maxi, block_sum))
+    print(bj(2, blocks, maxi, block_sum))
+    #for i in range(int(T_len(blocks, maxi))):
+    #    print(i, original_map_to_const_sum(i, blocks, maxi))
+
+    #print()
+    #for i in range(int(T_len(blocks, maxi))):
+    #    print(i, map_to_const_sum(i, blocks, maxi))
+
+    print()
+    for i in range(int(T_len(blocks, maxi))):
+        print(i, map_to_const_sum(i, blocks, maxi, block_sum))
+
+    #print(log(T_len(16, 2**15, 2**16), 2))
+    #print(log( T_len(16, 2**15, 2**16)+T_len(16,2**15+1,2**16), 2))
+
     """
     A soma dos carinhas de menos blocos, quando o somatório é maior que maxi,
     não funciona igual ao caso classico. O somatório talvez tenha que ser ajustado
@@ -81,8 +166,5 @@ if __name__ == '__main__':
     test_sum_equals_maxi(original_T_len)
     test_sum_equals_maxi(T_len)
     test_sum_larger_than_maxi(T_len)
-    """
-    Assert if T_len beha
-    """
 
     print("Done!")
