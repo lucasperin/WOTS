@@ -150,64 +150,46 @@ TEST(CachedWots_test, print_key) {
 }
 
 TEST(CachedWots_test, sign_4_OpenSSLSha256) {
-	ASSERT_EXIT( {
-		CWOTS_256_4 wots;
-		wots.loadKeys();
-		ByteArray data = ByteArray::fromString("My document");
-		std::vector<ByteArray> sig = wots.sign(data);
-	exit(0);
-	},::testing::ExitedWithCode(0),".*");
+	CWOTS_256_4 wots;
+	wots.loadKeys();
+	ByteArray data = ByteArray::fromString("My document");
+	std::vector<ByteArray> sig = wots.sign(data);
 }
 
 TEST(CachedWots_test, sign_and_verify_4_OpenSSLSha256) {
-	ASSERT_EXIT( {
 	CWOTS_256_4 wots;
 	wots.loadKeys();
 	ByteArray data = ByteArray::fromString("My document");
 	std::vector<ByteArray> sig = wots.sign(data);
 	ASSERT_EQ(wots.verify(data, sig), true);
-	exit(0);
-	},::testing::ExitedWithCode(0),".*");
 }
 
 TEST(CachedWots_test, sign_16_OpenSSLSha256) {
-	ASSERT_EXIT( {
 	CWOTS_256_16 wots;
 	wots.loadKeys();
 	ByteArray data = ByteArray::fromString("My document");
 	std::vector<ByteArray> sig = wots.sign(data);
-	exit(0);
-	},::testing::ExitedWithCode(0),".*");
 }
 
 TEST(CachedWots_test, sign_and_verify_16_OpenSSLSha256) {
-	ASSERT_EXIT( {
 	CWOTS_256_16 wots;
 	wots.loadKeys();
 	ByteArray data = ByteArray::fromString("My document");
 	std::vector<ByteArray> sig = wots.sign(data);
 	ASSERT_EQ(wots.verify(data, sig), true);
-	exit(0);
-	},::testing::ExitedWithCode(0),".*");
 }
 
 TEST(CachedWots_test, sign_256_OpenSSLSha256) {
-	ASSERT_EXIT( {
 	CWOTS_256_256 wots;
 	wots.loadKeys();
 	ByteArray data = ByteArray::fromString("My document");
 	std::vector<ByteArray> sig = wots.sign(data);
-	exit(0);
-	},::testing::ExitedWithCode(0),".*");
 }
 
 TEST(CachedWots_test, sign_and_verify_256_OpenSSLSha256) {
-	ASSERT_EXIT( {
 	CWOTS_256_256 wots;
 	wots.loadKeys();
 	ByteArray data = ByteArray::fromString("My document");
 	std::vector<ByteArray> sig = wots.sign(data);
 	ASSERT_EQ(wots.verify(data, sig), true);
-	exit(0);
-	},::testing::ExitedWithCode(0),".*");
 }

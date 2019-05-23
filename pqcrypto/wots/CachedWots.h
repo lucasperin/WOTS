@@ -8,6 +8,7 @@ protected:
 public:
 	CachedWots() noexcept: ClassicWots<T>(W) {};
 	CachedWots(const ByteArray& seed) noexcept : ClassicWots<T>(W,seed) {};
+	const std::vector<ByteArray> sign(ByteArray& data);
 
 };
 
@@ -25,25 +26,30 @@ void CachedWots<T,W>::genPublicKey() {
 	this->public_key = this->digest(pub);
 };
 
-/*
-template <class T, typename W>
+template <class T, int W>
 const std::vector<ByteArray> CachedWots<T,W>::sign(ByteArray& data) {
 	ByteArray fingerprint = this->digest(data);
-	std::vector<unsigned int> blocks = fingerprint.toBaseW(block_max);
-	std::vector<unsigned int> cs = checksum(blocks);
+	std::vector<unsigned int> blocks = fingerprint.toBaseW(this->block_max);
+	std::vector<unsigned int> cs = this->checksum(blocks);
 	std::vector<ByteArray> signature(blocks.size() + cs.size());
+	const unsigned int C = this->block_max/2;
 
 	//#pragma omp parallel for
 	for(long unsigned int i = 0; i < blocks.size(); i++){
-		signature[i] = this->digestChain(this->private_key[i], blocks[i]);
+		if(blocks[i] >= C)
+			signature[i] = this->digestChain(this->cache[i], blocks[i]-C);
+		else
+			signature[i] = this->digestChain(this->private_key[i], blocks[i]);
 	}
 
 	//#pragma omp parallel for
 	for(long unsigned int i = blocks.size(); i < this->private_key.size(); i++) {
 		int a = i-blocks.size();
-		signature[i] = this->digestChain(this->private_key[i], cs[a]);
+		if(cs[a] >= C)
+			signature[i] = this->digestChain(this->cache[i], cs[a]-C);
+		else
+			signature[i] = this->digestChain(this->private_key[i], cs[a]);
 	}
 	
 	return signature;
 }
-*/
