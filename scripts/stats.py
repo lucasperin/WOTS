@@ -148,3 +148,11 @@ if __name__ == "__main__":
         moment2 +=(i**2)*p
     print(sqrt(moment2- moment1**2))
 
+    print("\n ================= Panario\n")
+
+    var = 0
+    for i in range(2**16):
+        var +=(p-2**15)**2
+    v = var*p
+
+    print(sqrt(v))

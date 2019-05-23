@@ -10,7 +10,7 @@ def binomial(n, k):
     Binomial computed with factorial
     n >= k >= 0
     """
-    if n<0 or k <0 or n-k<0: return 0
+    #if n<0 or k <0 or n-k<0: return 0
     return fac(n)/(fac(k)*fac(n-k))
 
 
@@ -121,50 +121,22 @@ def test_sum_larger_than_maxi(func):
     assert(reduce(lambda x,y: x+func(19,10,y), [0] + list(range(10,21))) == 68785126410)
 
 if __name__ == '__main__':
-    print(T_len(2,6,9))
-    print(T_len(1,6,9))
-    print(T_len(1,6,8))
-    print(T_len(1,6,7))
-    print(T_len(1,6,6))
-    print(T_len(1,6,5))
-    print(T_len(1,6,4))
-    print(T_len(1,6,3))
-    print(T_len(1,6,2))
-    print(T_len(1,6,1))
-
-    #print(bk(3,3,3, 1))
-    #print(bk(3,3,3, 2))
-    #print(bk(3,3,3, 3))
-    #print(bk(3,3,3, 4))
-    blocks = 3
-    maxi = 3
-    block_sum = 3
-    print()
-    print(bj(1, blocks, maxi, block_sum))
-    print(bj(2, blocks, maxi, block_sum))
-    #for i in range(int(T_len(blocks, maxi))):
-    #    print(i, original_map_to_const_sum(i, blocks, maxi))
-
-    #print()
-    #for i in range(int(T_len(blocks, maxi))):
-    #    print(i, map_to_const_sum(i, blocks, maxi))
-
-    print()
-    for i in range(int(T_len(blocks, maxi))):
-        print(i, map_to_const_sum(i, blocks, maxi, block_sum))
-
-    #print(log(T_len(16, 2**15, 2**16), 2))
-    #print(log( T_len(16, 2**15, 2**16)+T_len(16,2**15+1,2**16), 2))
-
-    """
-    A soma dos carinhas de menos blocos, quando o somatório é maior que maxi,
-    não funciona igual ao caso classico. O somatório talvez tenha que ser ajustado
-    junto.
-    """
-
 
     test_sum_equals_maxi(original_T_len)
     test_sum_equals_maxi(T_len)
     test_sum_larger_than_maxi(T_len)
+
+    blocks = 70
+    maxi = 255
+    block_max = 255
+    #block_sum = floor((blocks*block_max)*0.5)
+    block_sum = 313
+    print(block_sum)
+    print(log(T_len(blocks, maxi, block_sum), 2))
+    print(floor(log(T_len(blocks, maxi, block_sum),2)), block_sum, (blocks*block_max) - block_sum, block_sum + (blocks*block_max) - block_sum)
+
+    #for i in range(1,20):
+        #print(map_to_const_sum(i, blocks, maxi, block_sum))
+
 
     print("Done!")
