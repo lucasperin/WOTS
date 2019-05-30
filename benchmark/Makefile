@@ -1,36 +1,39 @@
 LIBOBJECT = ../libpq.so
 CC = g++ -fopenmp
 INCLUDES = -I. -I../pqcrypto
-CPPFLAGS = -std=c++11 -DDEBUG --coverage
+CPPFLAGS = -std=c++11
 CXXFLAGS = -g -O3 -Wall
-COVFLAGS = -fprofile-arcs -ftest-coverage -lgcov --coverage
 EXECUTABLE = test.out
 LIBS = -pthread -lbenchmark -lcrypto $(LIBOBJECT)
 SRC_DIR = src
-TEST_SRCS += $(wildcard $(SRC_DIR)/*.cpp)
-OBJS += $(TEST_SRCS:.cpp=.o)
+SRCS += $(wildcard $(SRC_DIR)/*.cpp)
+APPS = $(SRCS:$(SRC_DIR)/%.cpp=%.out)
 
-%.o: %.cpp
-	@echo 'Building file: $<'
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -c -o "$@" "$<"
-	@echo 'Finished building: $<'
+%.out: $(SRC_DIR)/%.cpp
+	@echo 'Building file: $@'
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -o "$@" "$<" $(LIBS)
+	@echo 'Finished building: $@'
 	@echo ' '
 
-all: check-lib $(OBJS)
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) -o $(EXECUTABLE) $(OBJS) $(LIBS)
+all: check-lib $(APPS)
 	@echo 'Build complete!'
 	@echo ' '
 
 check-lib:
 	@test -s $(LIBOBJECT) || { echo "You should compile the lib first!"; exit 1; }
 	
-test:	all
-	@echo 'Executing tests...'
-	./$(EXECUTABLE)
-	@echo 'Done!'
+benchmark: all
+	@echo 'Running Tests'
+	$(foreach var, $(APPS), ./$(var);)
+
+encoding: Encoding_bench.out
+	./Encoding_bench.out
+
+wots: Wots_bench.out
+	./Wots_bench.out
 
 clean:
-	rm -f $(EXECUTABLE)
+	rm -f $(APPS)
 	find $(SRC_DIR) -type f -name "*.o" -delete
 	find $(SRC_DIR) -type f -name "*.gc*" -delete
 
