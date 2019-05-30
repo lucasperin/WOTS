@@ -1,5 +1,6 @@
 from math import factorial as fac, sqrt, floor, log
 from functools import reduce
+import scipy.special
 
 """
 Math basics for ma computations
@@ -11,7 +12,8 @@ def binomial(n, k):
     n >= k >= 0
     """
     #if n<0 or k <0 or n-k<0: return 0
-    return fac(n)/(fac(k)*fac(n-k))
+    return fac(n)//(fac(k)*fac(n-k))
+    #return scipy.special.binom(n,k)
 
 
 
@@ -122,21 +124,21 @@ def test_sum_larger_than_maxi(func):
 
 if __name__ == '__main__':
 
-    test_sum_equals_maxi(original_T_len)
-    test_sum_equals_maxi(T_len)
-    test_sum_larger_than_maxi(T_len)
+    #test_sum_equals_maxi(original_T_len)
+    #test_sum_equals_maxi(T_len)
+    #test_sum_larger_than_maxi(T_len)
 
-    blocks = 70
+    blocks = 80
     maxi = 255
     block_max = 255
     #block_sum = floor((blocks*block_max)*0.5)
-    block_sum = 313
-    print(block_sum)
-    print(log(T_len(blocks, maxi, block_sum), 2))
-    print(floor(log(T_len(blocks, maxi, block_sum),2)), block_sum, (blocks*block_max) - block_sum, block_sum + (blocks*block_max) - block_sum)
+    block_sum = 4000
+    #print(int(T_len(blocks, maxi, block_sum)))
+    #print(log(T_len(blocks, maxi, block_sum), 2))
+    #print(floor(log(T_len(blocks, maxi, block_sum),2)), block_sum, (blocks*block_max) - block_sum, block_sum + (blocks*block_max) - block_sum)
 
-    #for i in range(1,20):
-        #print(map_to_const_sum(i, blocks, maxi, block_sum))
+    for i in range(1,2):
+        print(map_to_const_sum(i, blocks, maxi, block_sum))
 
 
     print("Done!")
