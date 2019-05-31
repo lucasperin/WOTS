@@ -35,7 +35,7 @@ test: all
 
 .PHONY: bench
 bench: all
-	$(MAKE) -C benchmark test
+	$(MAKE) -C benchmark benchmark
 
 commitcheck: clean cleantest clean
 

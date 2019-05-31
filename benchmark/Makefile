@@ -23,14 +23,25 @@ check-lib:
 	@test -s $(LIBOBJECT) || { echo "You should compile the lib first!"; exit 1; }
 	
 benchmark: all
-	@echo 'Running Tests'
+	@echo 'Running ALL benchmarks'
 	$(foreach var, $(APPS), ./$(var);)
+	@echo 'Done!'
 
 encoding: Encoding_bench.out
 	./Encoding_bench.out
+	@echo 'Done!'
 
 wots: Wots_bench.out
 	./Wots_bench.out
+	@echo 'Done!'
+
+runlen: RunLength_bench.out
+	./RunLength_bench.out
+	@echo 'Done!'
+
+openssl: OpenSSL_bench.out
+	./OpenSSL_bench.out
+	@echo 'Done!'
 
 clean:
 	rm -f $(APPS)
