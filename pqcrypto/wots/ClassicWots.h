@@ -182,7 +182,7 @@ protected:
 		}
 	};
 
-	virtual void genPublicKey() {	
+	virtual void genPublicKey() {
 		this->loadPrivateKey();
 		ByteArray pub;
 		const unsigned int S = W - 1;

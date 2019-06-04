@@ -4,7 +4,7 @@ INCLUDES = -I. -I../pqcrypto
 CPPFLAGS = -std=c++11
 CXXFLAGS = -g -O3 -Wall
 EXECUTABLE = test.out
-LIBS = -pthread -lbenchmark -lcrypto $(LIBOBJECT)
+LIBS = -pthread -lbenchmark -lcrypto -lgmpxx -lgmp $(LIBOBJECT)
 SRC_DIR = src
 SRCS += $(wildcard $(SRC_DIR)/*.cpp)
 APPS = $(SRCS:$(SRC_DIR)/%.cpp=%.out)
@@ -31,8 +31,8 @@ encoding: Encoding_bench.out
 	./Encoding_bench.out
 	@echo 'Done!'
 
-wots: Wots_bench.out
-	./Wots_bench.out
+wots: ClassicWots_bench.out
+	./ClassicWots_bench.out
 	@echo 'Done!'
 
 runlen: RunLength_bench.out
