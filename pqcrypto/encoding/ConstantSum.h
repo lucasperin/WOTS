@@ -6,14 +6,14 @@
 
 namespace encoding {
 
-mpz_class binomial(unsigned int n, unsigned int k) {
+static mpz_class binomial(unsigned int n, unsigned int k) {
 //TODO maybe remove unsigned and add assertion??
 	mpz_class ret;
 	mpz_bin_uiui(ret.get_mpz_t(), n, k);
 	return ret;
 }
 
-mpz_class constantSumLen(unsigned int blocks, unsigned int max, unsigned int sum)
+static mpz_class constantSumLen(unsigned int blocks, unsigned int max, unsigned int sum)
 {
 	//TODO
 	//Assert ret >= 0
@@ -33,7 +33,7 @@ mpz_class constantSumLen(unsigned int blocks, unsigned int max, unsigned int sum
  * COULD (but wont) assert that i <= constantSumLen(blocks,max,sum)
  * Asserting this here would ruin benchmark results.
  */
-std::vector<unsigned int> toConstantSum(mpz_class& i, 
+static std::vector<unsigned int> toConstantSum(mpz_class& i, 
 		unsigned int blocks, unsigned int max, unsigned int sum) 
 {
 	if (blocks == 1)
@@ -53,7 +53,7 @@ std::vector<unsigned int> toConstantSum(mpz_class& i,
 	return ret;
 }
 
-std::vector<unsigned int> toConstantSum(ByteArray& message, 
+static std::vector<unsigned int> toConstantSum(ByteArray& message, 
 		unsigned int blocks, unsigned int max, unsigned int sum) 
 {
 	//CONVERT BYTEARRAY

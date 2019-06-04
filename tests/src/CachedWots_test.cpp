@@ -12,7 +12,6 @@ using CWOTS_256_256 =CachedWots<OpenSSLSha256,256>;
 using CWOTS_512_256 =CachedWots<OpenSSLSha512,256>;
 using CWOTS_256_65536 = CachedWots<OpenSSLSha256,65536>;
 using CWOTS_512_65536 = CachedWots<OpenSSLSha512,65536>;
-using CWOTS_256_777 = CachedWots<OpenSSLSha256,777>;
 
 
 TEST(CachedWots_test, constructor_OpenSSLSha256) {
@@ -33,7 +32,7 @@ TEST(CachedWots_test, constructor_OpenSSLSha512) {
 TEST(CachedWots_test, params_4_OpenSSLSha256) {
 	CWOTS_256_4 wots;
 	ASSERT_EQ(wots.n(),  32);
-	ASSERT_EQ(wots.w(),  2);
+	ASSERT_EQ(wots.w(),  4);
 	ASSERT_EQ(wots.t(),  133);
 	ASSERT_EQ(wots.t1(), 128);
 	ASSERT_EQ(wots.t2(), 5);
@@ -42,16 +41,7 @@ TEST(CachedWots_test, params_4_OpenSSLSha256) {
 TEST(CachedWots_test, params_16_OpenSSLSha256) {
 	CWOTS_256_16 wots;
 	ASSERT_EQ(wots.n(),  32);
-	ASSERT_EQ(wots.w(),  4);
-	ASSERT_EQ(wots.t(),  67);
-	ASSERT_EQ(wots.t1(), 64);
-	ASSERT_EQ(wots.t2(), 3);
-}
-
-TEST(CachedWots_test, params_default_OpenSSLSha256) {
-	CWOTS_256_16 wots;
-	ASSERT_EQ(wots.n(),  32);
-	ASSERT_EQ(wots.w(),  4);
+	ASSERT_EQ(wots.w(),  16);
 	ASSERT_EQ(wots.t(),  67);
 	ASSERT_EQ(wots.t1(), 64);
 	ASSERT_EQ(wots.t2(), 3);
@@ -60,7 +50,7 @@ TEST(CachedWots_test, params_default_OpenSSLSha256) {
 TEST(CachedWots_test, params_256_OpenSSLSha256) {
 	CWOTS_256_256 wots;
 	ASSERT_EQ(wots.n(),  32);
-	ASSERT_EQ(wots.w(),  8);
+	ASSERT_EQ(wots.w(),  256);
 	ASSERT_EQ(wots.t(),  34);
 	ASSERT_EQ(wots.t1(), 32);
 	ASSERT_EQ(wots.t2(), 2);
@@ -69,27 +59,10 @@ TEST(CachedWots_test, params_256_OpenSSLSha256) {
 TEST(CachedWots_test, params_65536_OpenSSLSha256) {
 	CWOTS_256_65536 wots;
 	ASSERT_EQ(wots.n(),  32);
-	ASSERT_EQ(wots.w(),  16);
+	ASSERT_EQ(wots.w(),  65536);
 	ASSERT_EQ(wots.t(),  18);
 	ASSERT_EQ(wots.t1(), 16);
 	ASSERT_EQ(wots.t2(), 2);
-}
-
-TEST(CachedWots_test, params_any_OpenSSLSha256) {
-	CWOTS_256_777 wots;
-	ASSERT_EQ(wots.n(),  32);
-	ASSERT_EQ(wots.w(),  16);
-	ASSERT_EQ(wots.t(),  18);
-	ASSERT_EQ(wots.t1(), 16);
-	ASSERT_EQ(wots.t2(), 2);
-}
-
-TEST(CachedWots_test, load_private_key_OpenSSLSha256) {
-	ASSERT_EXIT( {
-	CWOTS_256_777 wots;
-	wots.loadPrivateKey();
-	exit(0);
-	},::testing::ExitedWithCode(0),".*");
 }
 
 TEST(CachedWots_test, load_private_key_OpenSSLSha256_4) {
@@ -132,22 +105,6 @@ TEST(CachedWots_test, load_keys_256_OpenSSLSha256) {
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(CachedWots_test, load_keys_65536_OpenSSLSha256) {
-	ASSERT_EXIT( {
-	CWOTS_256_777 wots;
-	wots.loadKeys();
-	exit(0);
-	},::testing::ExitedWithCode(0),".*");
-}
-
-TEST(CachedWots_test, print_key) {
-	CWOTS_256_777 wots;
-	wots.loadKeys();
-
-	std::cout << " -- Public Key -- " << std::endl;
-	ByteArray pub = wots.publicKey();
-	std::cout << pub.toHex() << std::endl;
-}
 
 TEST(CachedWots_test, sign_4_OpenSSLSha256) {
 	CWOTS_256_4 wots;

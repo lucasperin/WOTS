@@ -3,10 +3,10 @@
 
 #include <cmath>
 #include <utility>
-#include "wots/WinternitzOTS.h"
+#include "wots/AbstractWOTS.h"
 
-template <class T>
-class RunLengthOTS : public WinternitzOTS<T> {
+template <class D>
+class RunLengthOTS : public AbstractWOTS<D, 4> {
 public:
 	RunLengthOTS() noexcept;
 	RunLengthOTS(unsigned int r_min, unsigned int r_max) noexcept;
@@ -32,14 +32,14 @@ protected:
 	ByteArray private_seed;
 };
 
-template <class T>
+template <class D>
 RunLengthOTS<T>::RunLengthOTS() noexcept : RunLengthOTS (123, 131) {};
 
-template <class T>
+template <class D>
 RunLengthOTS<T>::RunLengthOTS(unsigned int r_min, unsigned int r_max) noexcept : 
 		RunLengthOTS(r_min, r_max, ByteArray::fromHex("01020304FFFF")) {};
 
-template <class T>
+template <class D>
 RunLengthOTS<T>::RunLengthOTS(unsigned int r_min, unsigned int r_max, const ByteArray seed) noexcept {
 	this->r_min = r_min;
 	this->r_max = r_max;
@@ -47,25 +47,25 @@ RunLengthOTS<T>::RunLengthOTS(unsigned int r_min, unsigned int r_max, const Byte
 	this->private_seed = seed;
 };
 
-template <class T>
+template <class D>
 RunLengthOTS<T>::~RunLengthOTS() noexcept {}
 
-template <class T>
+template <class D>
 const unsigned int RunLengthOTS<T>::rMin() {
 	return this->r_min;
 };
 
-template <class T>
+template <class D>
 const unsigned int RunLengthOTS<T>::rMax() {
 	return this->r_max;
 };
 
-template <class T>
+template <class D>
 const unsigned int RunLengthOTS<T>::l() {
 	return this->l_max;
 };
 
-template <class T>
+template <class D>
 const std::vector<ByteArray> RunLengthOTS<T>::sign(ByteArray& data) {
 	std::vector<ByteArray> signature;
 
@@ -90,7 +90,7 @@ const std::vector<ByteArray> RunLengthOTS<T>::sign(ByteArray& data) {
 	return signature;
 }
 
-template <class T>
+template <class D>
 const std::pair<std::vector<ByteArray>, int> RunLengthOTS<T>::sign2(ByteArray& data) {
 	std::vector<ByteArray> signature;
 
@@ -119,7 +119,7 @@ const std::pair<std::vector<ByteArray>, int> RunLengthOTS<T>::sign2(ByteArray& d
 	return ret;
 }
 
-template <class T>
+template <class D>
 bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
 	if(not this->pubKeyIsLoaded())
 		return false;
@@ -147,7 +147,7 @@ bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature)
 	return false;
 }
 
-template <class T>
+template <class D>
 bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature, int R) {
 	if(not this->pubKeyIsLoaded())
 		return false;
@@ -170,7 +170,7 @@ bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature,
 	return false;
 }
 
-template <class T>
+template <class D>
 void RunLengthOTS<T>::genPrivateKey() {
 	const unsigned int key_len = this->r_max;;
 	for(unsigned int i = 0; i < key_len; i++) {
@@ -179,7 +179,7 @@ void RunLengthOTS<T>::genPrivateKey() {
 	}
 }
 
-template <class T>
+template <class D>
 void RunLengthOTS<T>::genPublicKey() {
 	this->loadPrivateKey();
 	ByteArray pub;
@@ -189,7 +189,7 @@ void RunLengthOTS<T>::genPublicKey() {
 	this->public_key = this->digest(pub);
 }
 
-template <class T>
+template <class D>
 std::pair<std::vector<unsigned int>, unsigned int> RunLengthOTS<T>::encodeRunLength(ByteArray& fingerprint) {
 	std::pair<std::vector<unsigned int>, unsigned int> ret;
 	std::string bin = fingerprint.toBin();
