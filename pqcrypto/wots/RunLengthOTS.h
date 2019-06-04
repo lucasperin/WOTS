@@ -3,10 +3,10 @@
 
 #include <cmath>
 #include <utility>
-#include "wots/AbstractWOTS.h"
+#include "wots/ClassicWots.h"
 
 template <class D>
-class RunLengthOTS : public AbstractWOTS<D, 4> {
+class RunLengthOTS : public ClassicWots<D, 4> {
 public:
 	RunLengthOTS() noexcept;
 	RunLengthOTS(unsigned int r_min, unsigned int r_max) noexcept;
@@ -33,14 +33,14 @@ protected:
 };
 
 template <class D>
-RunLengthOTS<T>::RunLengthOTS() noexcept : RunLengthOTS (123, 131) {};
+RunLengthOTS<D>::RunLengthOTS() noexcept : RunLengthOTS (123, 131) {};
 
 template <class D>
-RunLengthOTS<T>::RunLengthOTS(unsigned int r_min, unsigned int r_max) noexcept : 
+RunLengthOTS<D>::RunLengthOTS(unsigned int r_min, unsigned int r_max) noexcept : 
 		RunLengthOTS(r_min, r_max, ByteArray::fromHex("01020304FFFF")) {};
 
 template <class D>
-RunLengthOTS<T>::RunLengthOTS(unsigned int r_min, unsigned int r_max, const ByteArray seed) noexcept {
+RunLengthOTS<D>::RunLengthOTS(unsigned int r_min, unsigned int r_max, const ByteArray seed) noexcept {
 	this->r_min = r_min;
 	this->r_max = r_max;
 	this->l_max = (unsigned int) floor( log2(this->bitLen()) -1 );
@@ -48,25 +48,25 @@ RunLengthOTS<T>::RunLengthOTS(unsigned int r_min, unsigned int r_max, const Byte
 };
 
 template <class D>
-RunLengthOTS<T>::~RunLengthOTS() noexcept {}
+RunLengthOTS<D>::~RunLengthOTS() noexcept {}
 
 template <class D>
-const unsigned int RunLengthOTS<T>::rMin() {
+const unsigned int RunLengthOTS<D>::rMin() {
 	return this->r_min;
 };
 
 template <class D>
-const unsigned int RunLengthOTS<T>::rMax() {
+const unsigned int RunLengthOTS<D>::rMax() {
 	return this->r_max;
 };
 
 template <class D>
-const unsigned int RunLengthOTS<T>::l() {
+const unsigned int RunLengthOTS<D>::l() {
 	return this->l_max;
 };
 
 template <class D>
-const std::vector<ByteArray> RunLengthOTS<T>::sign(ByteArray& data) {
+const std::vector<ByteArray> RunLengthOTS<D>::sign(ByteArray& data) {
 	std::vector<ByteArray> signature;
 
 	//TODO(Perin) Here i'm taking hash of hash, instead of incrementing a counter
@@ -91,7 +91,7 @@ const std::vector<ByteArray> RunLengthOTS<T>::sign(ByteArray& data) {
 }
 
 template <class D>
-const std::pair<std::vector<ByteArray>, int> RunLengthOTS<T>::sign2(ByteArray& data) {
+const std::pair<std::vector<ByteArray>, int> RunLengthOTS<D>::sign2(ByteArray& data) {
 	std::vector<ByteArray> signature;
 
 	int R = 1;
@@ -120,7 +120,7 @@ const std::pair<std::vector<ByteArray>, int> RunLengthOTS<T>::sign2(ByteArray& d
 }
 
 template <class D>
-bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
+bool RunLengthOTS<D>::verify(ByteArray& data, std::vector<ByteArray>& signature) {
 	if(not this->pubKeyIsLoaded())
 		return false;
 	ByteArray fingerprint = this->digest(data);
@@ -148,7 +148,7 @@ bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature)
 }
 
 template <class D>
-bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature, int R) {
+bool RunLengthOTS<D>::verify(ByteArray& data, std::vector<ByteArray>& signature, int R) {
 	if(not this->pubKeyIsLoaded())
 		return false;
 	ByteArray randomized = ByteArray::fromString(std::to_string(R)) + data;
@@ -171,7 +171,7 @@ bool RunLengthOTS<T>::verify(ByteArray& data, std::vector<ByteArray>& signature,
 }
 
 template <class D>
-void RunLengthOTS<T>::genPrivateKey() {
+void RunLengthOTS<D>::genPrivateKey() {
 	const unsigned int key_len = this->r_max;;
 	for(unsigned int i = 0; i < key_len; i++) {
 		//TODO(Perin): Use PRF and SEED;
@@ -180,7 +180,7 @@ void RunLengthOTS<T>::genPrivateKey() {
 }
 
 template <class D>
-void RunLengthOTS<T>::genPublicKey() {
+void RunLengthOTS<D>::genPublicKey() {
 	this->loadPrivateKey();
 	ByteArray pub;
 	const unsigned int S = l_max;
@@ -190,7 +190,7 @@ void RunLengthOTS<T>::genPublicKey() {
 }
 
 template <class D>
-std::pair<std::vector<unsigned int>, unsigned int> RunLengthOTS<T>::encodeRunLength(ByteArray& fingerprint) {
+std::pair<std::vector<unsigned int>, unsigned int> RunLengthOTS<D>::encodeRunLength(ByteArray& fingerprint) {
 	std::pair<std::vector<unsigned int>, unsigned int> ret;
 	std::string bin = fingerprint.toBin();
 	unsigned int run_size = 1;

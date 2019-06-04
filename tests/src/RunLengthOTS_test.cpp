@@ -1,4 +1,3 @@
-/*
 #include "gtest/gtest.h"
 #include "wots/RunLengthOTS.h"
 #include "primitives/OpenSSLSha256.h"
@@ -65,12 +64,14 @@ TEST(RunLengthOTS_test, sign_OpenSSLSha256) {
 	std::vector<ByteArray> sig = ots.sign(data);
 }
 
+/* Too slow..
 TEST(RunLengthOTS_test, sign_OpenSSLSha512) {
 	RunLengthOTS<OpenSSLSha512> ots;
 	ots.loadKeys();
 	ByteArray data = ByteArray::fromString("My document");
 	std::vector<ByteArray> sig = ots.sign(data);
 }
+*/
 
 TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha256) {
 	RunLengthOTS<OpenSSLSha256> ots;
@@ -80,6 +81,7 @@ TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha256) {
 	ASSERT_EQ(ots.verify(data, sig), true);
 }
 
+/*
 TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha512) {
 	RunLengthOTS<OpenSSLSha512> ots;
 	ots.loadKeys();
@@ -87,6 +89,7 @@ TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha512) {
 	std::vector<ByteArray> sig = ots.sign(data);
 	ASSERT_EQ(ots.verify(data, sig), true);
 }
+*/
 
 TEST(RunLengthOTS_test, sign_and_verify_R_OpenSSLSha256) {
 	RunLengthOTS<OpenSSLSha256> ots;
@@ -96,4 +99,3 @@ TEST(RunLengthOTS_test, sign_and_verify_R_OpenSSLSha256) {
 	ASSERT_EQ(ots.verify(data, sig.first, sig.second), true);
 }
 
-*/
