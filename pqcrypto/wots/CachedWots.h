@@ -11,24 +11,17 @@ public:
 	const std::vector<ByteArray> sign(ByteArray& data) final {
 		std::vector<unsigned int> blocks = this->genFingerprint(data);
 		std::vector<unsigned int> cs = this->checksum(blocks);
+		blocks.insert(blocks.end(), cs.begin(), cs.end());
 		std::vector<ByteArray> signature(blocks.size() + cs.size());
 		const unsigned int C = W/2;
 
 		//#pragma omp parallel for
 		for(long unsigned int i = 0; i < blocks.size(); i++){
-			if(blocks[i] >= C)
-				signature[i] = this->digestChain(this->cache[i], blocks[i]-C);
+			unsigned int iterations = W - 1 -blocks[i];
+			if(iterations >= C)
+				signature[i] = this->digestChain(this->cache[i], iterations-C);
 			else
-				signature[i] = this->digestChain(this->private_key[i], blocks[i]);
-		}
-
-		//#pragma omp parallel for
-		for(long unsigned int i = blocks.size(); i < this->private_key.size(); i++) {
-			int a = i-blocks.size();
-			if(cs[a] >= C)
-				signature[i] = this->digestChain(this->cache[i], cs[a]-C);
-			else
-				signature[i] = this->digestChain(this->private_key[i], cs[a]);
+				signature[i] = this->digestChain(this->private_key[i], iterations);
 		}
 		
 		return signature;

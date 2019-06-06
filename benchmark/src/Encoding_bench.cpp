@@ -82,6 +82,13 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_35_4462, ConstantSumWots<OpenS
 		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
 	}
 }
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_37_1972, ConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
 ////
 
 

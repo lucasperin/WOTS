@@ -35,6 +35,10 @@ wots: ClassicWots_bench.out
 	./ClassicWots_bench.out
 	@echo 'Done!'
 
+constantsum: ConstantSumWots_bench.out
+	./ConstantSumWots_bench.out
+	@echo 'Done!'
+
 runlen: RunLength_bench.out
 	./RunLength_bench.out
 	@echo 'Done!'

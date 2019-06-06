@@ -1,5 +1,5 @@
-#ifndef CONSTANTSUM_WOTS
-#define CONSTANTSUM_WOTS
+#ifndef CACHEDCONSTANTSUM_WOTS
+#define CACHEDCONSTANTSUM_WOTS
 #include "wots/ConstantSumWots.h"
 #include "wots/CachedWots.h"
 #include <gmpxx.h>
@@ -7,10 +7,10 @@
 #include <algorithm>
 
 template <class D, int W, int T, int S>
-class CachedConstantSumWots : public ConstantSumWots<D,W, T, S>, public CachedWots<D,W> {
+class CachedConstantSumWots : public ConstantSumWots<D, W, T, S>, public CachedWots<D,W> {
 public:
 	CachedConstantSumWots() noexcept {};
-	CachedConstantSumWots(const ByteArray& seed) noexcept : ConstantSumWots<D,W>(W,seed) {};
+	CachedConstantSumWots(const ByteArray& seed) noexcept : ConstantSumWots<D,W,T,S>(W,seed) {};
 };
 
 #endif

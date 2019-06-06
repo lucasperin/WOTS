@@ -98,17 +98,12 @@ public:
 	virtual const std::vector<ByteArray> sign(ByteArray& data) {
 		std::vector<unsigned int> blocks = this->genFingerprint(data);
 		std::vector<unsigned int> cs = checksum(blocks);
+		blocks.insert(blocks.end(), cs.begin(), cs.end());
 		std::vector<ByteArray> signature(blocks.size() + cs.size());
 
 		//#pragma omp parallel for
 		for(long unsigned int i = 0; i < blocks.size(); i++){
-			signature[i] = this->digestChain(this->private_key[i], blocks[i]);
-		}
-
-		//#pragma omp parallel for
-		for(long unsigned int i = blocks.size(); i < this->private_key.size(); i++) {
-			int a = i-blocks.size();
-			signature[i] = this->digestChain(this->private_key[i], cs[a]);
+			signature[i] = this->digestChain(this->private_key[i], W - 1 - blocks[i]);
 		}
 		
 		return signature;
@@ -119,24 +114,12 @@ public:
 			return false;
 		std::vector<unsigned int> blocks = this->genFingerprint(data);
 		std::vector<unsigned int> cs = checksum(blocks);
-		std::vector<ByteArray> check_vector(blocks.size() + cs.size());
+		blocks.insert(blocks.end(), cs.begin(), cs.end());
 		ByteArray check;
 
 		//#pragma omp parallel for
 		for(long unsigned int i = 0; i < blocks.size(); i++) {
-			int remain = W - 1 -blocks[i];
-			check_vector[i] = this->digestChain(signature[i], remain);
-			//check = check + this->digestChain(signature[i], remain);
-		}
-
-		//#pragma omp parallel for
-		for(long unsigned int i = blocks.size(); i < this->private_key.size(); i++) {
-			int a = i-blocks.size();
-			check_vector[i] = this->digestChain(signature[i], W - 1 - cs[a]);
-		}
-
-		for(long unsigned int i = 0; i < check_vector.size(); i++) {
-			check = check + check_vector[i];
+			check = check + this->digestChain(signature[i], blocks[i]);
 		}
 
 		check = this->digest(check);

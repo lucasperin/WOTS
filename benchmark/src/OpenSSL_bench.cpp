@@ -22,7 +22,6 @@ BENCHMARK_TEMPLATE_DEFINE_F(OpenSSLFixture, OpenSSLDigestChain, OpenSSLSha256)(b
 	ByteArray h;
 		const std::string test = "test";
 		data = ByteArray::fromString(test);
-		std::cout<< data.toString();
 	for (auto _ : state){
 		benchmark::DoNotOptimize
 		(
