@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <ByteArray.h>
+#include <utils/ByteArray.hpp>
 #include <iostream>
 
 
@@ -18,57 +18,65 @@ TEST(ByteArray_test, constructor) {
 }
 
 TEST(ByteArray_test, constructor_negative) {
-	ASSERT_EXIT( {
+	EXPECT_THROW( {
 	{ByteArray data(-1);} 
 	exit(0);
-	},::testing::KilledBySignal(SIGSEGV),".*");
+	}, std::exception);
 }
 
-TEST(ByteArray_test, toBin) {
-	ByteArray data = ByteArray::fromHex("0");
-	ASSERT_STREQ(data.toBin().c_str(), "00000000");
-	data = ByteArray::fromHex("0F");
-	ASSERT_STREQ(data.toBin().c_str(), "00001111");
-	data = ByteArray::fromHex("69");
-	ASSERT_STREQ(data.toBin().c_str(), "01101001");
-	data = ByteArray::fromHex("6F09");
-	ASSERT_STREQ(data.toBin().c_str(), "0110111100001001");
+TEST(ByteArray_test, constructor_std_byte_array) {
+	std::byte c[2] = {std::byte{0x41}, std::byte{0x42}}; 
+	ASSERT_EXIT( {
+	{ByteArray t(c, 2);}
+	exit(0);
+	},::testing::ExitedWithCode(0),".*");		
 }
 
-TEST(ByteArray_test, base_4) {
-	const std::string test = "12348C5A";
-	ByteArray data = ByteArray::fromHex(test);
-	std::vector<unsigned int> base_w = data.toBaseW(4);
-	ASSERT_EQ(0, base_w[0]);
-	ASSERT_EQ(1, base_w[1]); //0001
-	ASSERT_EQ(0, base_w[2]);
-	ASSERT_EQ(2, base_w[3]); //0010
-	ASSERT_EQ(0, base_w[4]);
-	ASSERT_EQ(3, base_w[5]); //0011
-	ASSERT_EQ(1, base_w[6]);
-	ASSERT_EQ(0, base_w[7]); //0100
-	ASSERT_EQ(2, base_w[8]);
-	ASSERT_EQ(0, base_w[9]); //1000
-	ASSERT_EQ(3, base_w[10]);
-	ASSERT_EQ(0, base_w[11]); //1100
-	ASSERT_EQ(1, base_w[12]);
-	ASSERT_EQ(1, base_w[13]); //0101
-	ASSERT_EQ(2, base_w[14]);
-	ASSERT_EQ(2, base_w[15]); //1010
+TEST(ByteArray_test, constructor_std_byte_array_value) {
+	std::byte c[2] = {std::byte{0x41}, std::byte{0x42}}; 
+	ByteArray data(c, 2);
+	ASSERT_EQ(std::to_string(data), "4142");
 }
 
-TEST(ByteArray_test, base_16) {
-	const std::string test = "123456789ABCDEF";
-	ByteArray data = ByteArray::fromHex(test);
-	std::vector<unsigned int> base_w = data.toBaseW(16);
-	for(unsigned int i = 0; i < 16;i++) {
-		ASSERT_EQ(i, base_w[i]);
-	}
+TEST(ByteArray_test, constructor_char_cast) {
+	char c[2] = {0x41, 0x42}; 
+	ASSERT_EXIT( {
+	{ByteArray t(reinterpret_cast<std::byte*>(c), 2);}
+	exit(0);
+	},::testing::ExitedWithCode(0),".*");		
 }
 
+TEST(ByteArray_test, constructor_char_cast_value) {
+	char c[2] = {0x41, 0x42}; 
+	ByteArray data(reinterpret_cast<std::byte*>(c), 2);
+	ASSERT_EQ(std::to_string(data), "4142");
+}
 
-TEST(ByteArray_test, DISABLED_base_65536) {
-	FAIL() << "NOT IMPLEMENTED";
+TEST(ByteArray_test, bytes_to_char_conversion) {
+	char c[2] = {0x41, 0x42}; 
+	ByteArray ba(reinterpret_cast<std::byte*>(c), 2);
+	std::vector<std::byte> bytes = ba.container();
+	char* cbytes = reinterpret_cast<char*>(bytes.data());
+	ASSERT_EQ(cbytes[0], 0x41);
+	ASSERT_EQ(cbytes[1], 0x42);
+}
+
+TEST(ByteArray_test, hex_conversion) {
+	auto data = "00"_ba;
+	ASSERT_EQ(std::to_string(data), "00");
+	data = "01"_ba;
+	ASSERT_EQ(std::to_string(data), "01");
+	auto data2 = hstoba("02");
+	ASSERT_EQ(std::to_string(data2), "02");
+	data2 = hstoba("020FFFFA");
+	ASSERT_EQ(std::to_string(data2), "020FFFFA");
+	//Last digit is cut off due to odd length
+	data2 = hstoba("020FFFFA1");
+	ASSERT_EQ(std::to_string(data2), "020FFFFA");
+	ByteArray data3 = "11"_ba;
+	ASSERT_EQ(std::to_string(data3), "11");
+	ByteArray data4 = hstoba("22");
+	ASSERT_EQ(std::to_string(data4), "22");
 }
 
 
