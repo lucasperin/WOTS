@@ -1,6 +1,6 @@
 SHELL ?= /bin/bash
 CC = g++ -fopenmp
-CPPFLAGS += -std=c++11
+CPPFLAGS += -std=c++17
 CXXFLAGS += -O3 -shared -fPIC -Wall
 
 LIBS = -lcrypto 

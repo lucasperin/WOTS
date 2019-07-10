@@ -2,7 +2,7 @@ LIBOBJECT = ../libpq.so
 
 INCLUDES = -I../pqcrypto
 CC = g++
-CPPFLAGS = -std=c++11 -DDEBUG --coverage
+CPPFLAGS = -std=c++17 -DDEBUG --coverage
 CXXFLAGS = -g -O0
 EXECUTABLE = test.out
 LIBS = -pthread -lgtest -lcrypto -lgmpxx -lgmp $(LIBOBJECT)
