@@ -22,7 +22,7 @@ public:
 		ByteArray aux = this->digest(data);
 		mpz_class i;
 		//TODO try other conversions for speed
-		i.set_str(aux.toHex(), 16);
+		i.set_str(std::to_string(aux), 16);
 		return this->toConstantSum(i, T, W-1, S);
 		
 	};
@@ -70,12 +70,6 @@ protected:
 		std::vector<unsigned int> ret2 = toConstantSum(i, blocks - 1, max, sum-k);
 		ret.insert(ret.end(), ret2.begin(), ret2.end());
 		return ret;
-	}
-	
-	std::vector<unsigned int> toConstantSum(ByteArray& message, 
-			unsigned int blocks, unsigned int max, unsigned int sum) 
-	{
-		//CONVERT BYTEARRAY
 	}
 
 };

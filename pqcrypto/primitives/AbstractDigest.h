@@ -1,6 +1,6 @@
 #ifndef ABSTRACT_DIGEST
 #define ABSTRACT_DIGEST
-#include "ByteArray.h"
+#include "utils/ByteArray.hpp"
 
 class AbstractDigest {
 public:

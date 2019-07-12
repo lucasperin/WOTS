@@ -25,6 +25,7 @@ public:
 protected:
 	virtual void genPrivateKey();
 	virtual void genPublicKey();
+	std::string toBin(ByteArray& data);
 
 	unsigned int r_min;
 	unsigned int r_max;
@@ -37,7 +38,7 @@ RunLengthOTS<D>::RunLengthOTS() noexcept : RunLengthOTS (123, 131) {};
 
 template <class D>
 RunLengthOTS<D>::RunLengthOTS(unsigned int r_min, unsigned int r_max) noexcept : 
-		RunLengthOTS(r_min, r_max, ByteArray::fromHex("01020304FFFF")) {};
+		RunLengthOTS(r_min, r_max, hstoba("01020304FFFF")) {};
 
 template <class D>
 RunLengthOTS<D>::RunLengthOTS(unsigned int r_min, unsigned int r_max, const ByteArray seed) noexcept {
@@ -95,14 +96,16 @@ const std::pair<std::vector<ByteArray>, int> RunLengthOTS<D>::sign2(ByteArray& d
 	std::vector<ByteArray> signature;
 
 	int R = 1;
-	ByteArray randomized = ByteArray::fromString(std::to_string(R)) + data;
+	ByteArray randomized(data);
+    randomized	+= hstoba(std::to_string(R));
 	ByteArray fingerprint = this->digest(randomized);
 	std::pair<std::vector<unsigned int>, unsigned int> blocks = encodeRunLength(fingerprint);
 
 	while( !((blocks.second <= l_max) && (blocks.first.size() >= r_min) 
 			&& (blocks.first.size() <= r_max)) ){
 		R++;
-		randomized = ByteArray::fromString(std::to_string(R)) + data;
+		randomized = ByteArray(data);
+		randomized	+= hstoba(std::to_string(R));
 		fingerprint = this->digest(randomized);
 		blocks = encodeRunLength(fingerprint);
 	}
@@ -134,15 +137,15 @@ bool RunLengthOTS<D>::verify(ByteArray& data, std::vector<ByteArray>& signature)
 
 	ByteArray check;
 	for(long unsigned int i = 0; i < blocks.first.size(); i++){
-		check = check + this->digestChain(signature[i], blocks.first[i]);
+		check += this->digestChain(signature[i], blocks.first[i]);
 	}
 	for(long unsigned int i = blocks.first.size(); i < this->r_max; i++) {
-		check = check + this->digestChain(signature[i], 1);
+		check += this->digestChain(signature[i], 1);
 	}
 
 	check = this->digest(check);
 	
-	if( this->public_key.toHex().compare(check.toHex()) == 0 )
+	if( std::to_string(this->public_key).compare(std::to_string(check)) == 0 )
 		return true;
 	return false;
 }
@@ -151,21 +154,22 @@ template <class D>
 bool RunLengthOTS<D>::verify(ByteArray& data, std::vector<ByteArray>& signature, int R) {
 	if(not this->pubKeyIsLoaded())
 		return false;
-	ByteArray randomized = ByteArray::fromString(std::to_string(R)) + data;
+	ByteArray randomized(data);
+    randomized	+= hstoba(std::to_string(R));
 	ByteArray fingerprint = this->digest(randomized);
 	std::pair<std::vector<unsigned int>, unsigned int> blocks = encodeRunLength(fingerprint);
 
 	ByteArray check;
 	for(long unsigned int i = 0; i < blocks.first.size(); i++){
-		check = check + this->digestChain(signature[i], blocks.first[i]);
+		check += this->digestChain(signature[i], blocks.first[i]);
 	}
 	for(long unsigned int i = blocks.first.size(); i < this->r_max; i++) {
-		check = check + this->digestChain(signature[i], 1);
+		check += this->digestChain(signature[i], 1);
 	}
 
 	check = this->digest(check);
 	
-	if( this->public_key.toHex().compare(check.toHex()) == 0 )
+	if( std::to_string(this->public_key).compare(std::to_string(check)) == 0 )
 		return true;
 	return false;
 }
@@ -185,14 +189,14 @@ void RunLengthOTS<D>::genPublicKey() {
 	ByteArray pub;
 	const unsigned int S = l_max;
 	for(long unsigned int i = 0; i < this->private_key.size(); i++)
-		pub = pub + this->digestChain(this->private_key[i], S);
+		pub += this->digestChain(this->private_key[i], S);
 	this->public_key = this->digest(pub);
 }
 
 template <class D>
 std::pair<std::vector<unsigned int>, unsigned int> RunLengthOTS<D>::encodeRunLength(ByteArray& fingerprint) {
 	std::pair<std::vector<unsigned int>, unsigned int> ret;
-	std::string bin = fingerprint.toBin();
+	std::string bin = toBin(fingerprint);
 	unsigned int run_size = 1;
 	char previous = bin[0];
 	for(long unsigned int i = 1; i < bin.length(); i++){
@@ -211,5 +215,39 @@ std::pair<std::vector<unsigned int>, unsigned int> RunLengthOTS<D>::encodeRunLen
 	return ret;
 }
 
+template <class D>
+std::string RunLengthOTS<D>::toBin(ByteArray& data) {
+
+	std::string hex = std::to_string(data);
+	std::string bin = "";
+	for(char& c : hex) {
+		switch(c)
+         {
+             case '0': bin.append("0000"); break;
+             case '1': bin.append("0001"); break;
+             case '2': bin.append("0010"); break;
+             case '3': bin.append("0011"); break;
+             case '4': bin.append("0100"); break;
+             case '5': bin.append("0101"); break;
+             case '6': bin.append("0110"); break;
+             case '7': bin.append("0111"); break;
+             case '8': bin.append("1000"); break;
+             case '9': bin.append("1001"); break;
+             case 'A': bin.append("1010"); break;
+             case 'B': bin.append("1011"); break;
+             case 'C': bin.append("1100"); break;
+             case 'D': bin.append("1101"); break;
+             case 'E': bin.append("1110"); break;
+             case 'F': bin.append("1111"); break;
+             case 'a': bin.append("1010"); break;
+             case 'b': bin.append("1011"); break;
+             case 'c': bin.append("1100"); break;
+             case 'd': bin.append("1101"); break;
+             case 'e': bin.append("1110"); break;
+             case 'f': bin.append("1111"); break;
+         }
+	}
+	return bin;
+}
 
 #endif

@@ -37,7 +37,7 @@ protected:
 		const unsigned int C = W/2;
 		for(long unsigned int i = 0; i < this->private_key.size(); i++){
 			this->cache[i] = this->digestChain(this->private_key[i], C);
-			pub = pub + this->digestChain(this->cache[i], S-C);
+			pub += this->digestChain(this->cache[i], S-C);
 		}
 		this->public_key = this->digest(pub);
 	};

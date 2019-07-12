@@ -2,7 +2,6 @@
 #include "wots/ClassicWots.h"
 #include "wots/ConstantSumWots.h"
 #include "wots/RunLengthOTS.h"
-#include "encoding/ConstantSum.h"
 #include "primitives/OpenSSLSha256.h"
 #include "primitives/OpenSSLSha512.h"
 
@@ -114,31 +113,5 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_512_256, ConstantSumWots<OpenSSLSha512
 	}
 }
 */
-
-
-static void STATIC_ENCODING_256_256_35_4462_1(benchmark::State& state) {
-	mpz_class i = 1;
-	std::vector<unsigned int> m;
-	for (auto _ : state){
-		benchmark::DoNotOptimize(
-		m = encoding::toConstantSum(i, 80,255,4000)
-		);
-	}
-}
-
-BENCHMARK(STATIC_ENCODING_256_256_35_4462_1);
-
-static void STATIC_ENCODING_256_256_35_4462_DATA(benchmark::State& state) {
-	std::vector<unsigned int> m;
-	OpenSSLSha256 md;
-	ByteArray data = ByteArray::fromString("My document");
-	for (auto _ : state){
-		ByteArray fp = md.digest(data);
-		benchmark::DoNotOptimize(
-		m = encoding::toConstantSum(fp, 80,255,4000)
-		);
-	}
-}
-BENCHMARK(STATIC_ENCODING_256_256_35_4462_DATA);
 
 BENCHMARK_MAIN();

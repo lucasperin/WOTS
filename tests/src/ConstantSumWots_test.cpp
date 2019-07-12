@@ -93,28 +93,28 @@ TEST(ConstantSumWots_test, load_keys_256_256_37_1972) {
 TEST(ConstantSumWots_test, sign_256_256_35_4462) {
 	WOTS_256_256_35_4462 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
 TEST(ConstantSumWots_test, sign_256_256_35_4462_C) {
 	CWOTS_256_256_35_4462 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
 TEST(ConstantSumWots_test, sign_256_256_37_1972) {
 	WOTS_256_256_37_1972 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
 TEST(ConstantSumWots_test, sign_and_verify_256_256_35_4462) {
 	WOTS_256_256_35_4462 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 	ASSERT_EQ(w.verify(data, sig), true);
 }
@@ -122,7 +122,7 @@ TEST(ConstantSumWots_test, sign_and_verify_256_256_35_4462) {
 TEST(ConstantSumWots_test, sign_and_verify_256_256_35_4462_C) {
 	CWOTS_256_256_35_4462 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 	ASSERT_EQ(w.verify(data, sig), true);
 }
@@ -130,7 +130,7 @@ TEST(ConstantSumWots_test, sign_and_verify_256_256_35_4462_C) {
 TEST(ConstantSumWots_test, sign_and_verify_256_256_37_1972) {
 	WOTS_256_256_37_1972 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 	ASSERT_EQ(w.verify(data, sig), true);
 }
@@ -233,14 +233,14 @@ TEST(ConstantSumWots_test, load_keys_256_OpenSSLSha256) {
 TEST(ConstantSumWots_test, sign_4_OpenSSLSha256) {
 	WOTS_256_4 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
 TEST(ConstantSumWots_test, sign_and_verify_4_OpenSSLSha256) {
 	WOTS_256_4 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 	ASSERT_EQ(w.verify(data, sig), true);
 }
@@ -248,14 +248,14 @@ TEST(ConstantSumWots_test, sign_and_verify_4_OpenSSLSha256) {
 TEST(ConstantSumWots_test, sign_16_OpenSSLSha256) {
 	WOTS_256_16 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
 TEST(ConstantSumWots_test, sign_and_verify_16_OpenSSLSha256) {
 	WOTS_256_16 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 	ASSERT_EQ(w.verify(data, sig), true);
 }
@@ -263,14 +263,14 @@ TEST(ConstantSumWots_test, sign_and_verify_16_OpenSSLSha256) {
 TEST(ConstantSumWots_test, sign_256_OpenSSLSha256) {
 	WOTS_256_256 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
 TEST(ConstantSumWots_test, sign_and_verify_256_OpenSSLSha256) {
 	WOTS_256_256 w;
 	w.loadKeys();
-	ByteArray data = ByteArray::fromString("My document");
+	ByteArray data = hstoba("My document");
 	std::vector<ByteArray> sig = w.sign(data);
 	ASSERT_EQ(w.verify(data, sig), true);
 }

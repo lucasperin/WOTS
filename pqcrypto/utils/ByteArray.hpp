@@ -1,3 +1,5 @@
+#pragma once
+
 #include "bytearray.hpp"
 
 typedef bytearray<std::allocator<std::byte> > ByteArray;

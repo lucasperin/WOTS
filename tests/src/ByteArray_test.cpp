@@ -52,13 +52,30 @@ TEST(ByteArray_test, constructor_char_cast_value) {
 	ASSERT_EQ(std::to_string(data), "4142");
 }
 
-TEST(ByteArray_test, bytes_to_char_conversion) {
+TEST(ByteArray_test, bytes_to_char_indirect_conversion) {
 	char c[2] = {0x41, 0x42}; 
 	ByteArray ba(reinterpret_cast<std::byte*>(c), 2);
 	std::vector<std::byte> bytes = ba.container();
 	char* cbytes = reinterpret_cast<char*>(bytes.data());
 	ASSERT_EQ(cbytes[0], 0x41);
 	ASSERT_EQ(cbytes[1], 0x42);
+}
+
+TEST(ByteArray_test, bytes_to_char_direct_conversion) {
+	char c[2] = {0x41, 0x42}; 
+	ByteArray ba(reinterpret_cast<std::byte*>(c), 2);
+	char* cbytes = reinterpret_cast<char*>(ba.data());
+	ASSERT_EQ(cbytes[0], 0x41);
+	ASSERT_EQ(cbytes[1], 0x42);
+}
+
+TEST(ByteArray_test, manipulate_internal_data_as_char) {
+	ByteArray ba(3);
+	unsigned char* cbytes = reinterpret_cast<unsigned char*>(ba.data());
+	cbytes[0] = 0x40;
+	cbytes[1] = 0x41;
+	cbytes[2] = 0x42;
+	ASSERT_EQ(std::to_string(ba), "404142");
 }
 
 TEST(ByteArray_test, hex_conversion) {

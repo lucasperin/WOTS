@@ -119,6 +119,16 @@ class bytearray : public bytearray_processor<std::byte, Allocator>,
 		return (*this);
 	}
 
+	/**
+	 * @biref Concatenation operator
+	 */
+	bytearray<Allocator>& operator+=(const bytearray<Allocator>& rhs) noexcept
+	{
+		vector::insert(this->end(), rhs.begin(), rhs.end());
+		return (*this);
+	}
+
+
 	using vector::operator[];
 	using vector::begin;
 	using vector::end;
@@ -128,6 +138,7 @@ class bytearray : public bytearray_processor<std::byte, Allocator>,
 	using vector::rend;
 	using vector::crbegin;
 	using vector::crend;
+	using vector::data;
 	using vector::capacity;
 	using vector::size;
 	using vector::reserve;

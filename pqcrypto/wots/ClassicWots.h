@@ -2,7 +2,7 @@
 #define CLASSIC_WOTS
 
 #include "primitives/AbstractDigest.h"
-#include "ByteArray.h"
+#include "utils/ByteArray.hpp"
 #include <sstream>
 #include <math.h>
 
@@ -17,6 +17,9 @@ public:
 		static_assert( W == 4 || W == 16 || W == 256 || W == 65536, "Winternitz Parameter W not supported.");
 		this->current_state = ClassicWots::INITIALIZED;
 		block_size = std::ceil(log2(W));
+		if(private_seed.size()==0)
+			private_seed = hstoba("01020304FFFF");
+
 	};
 
 	ClassicWots(const ByteArray& seed) : ClassicWots() {
@@ -119,12 +122,13 @@ public:
 
 		//#pragma omp parallel for
 		for(long unsigned int i = 0; i < blocks.size(); i++) {
-			check = check + this->digestChain(signature[i], blocks[i]);
+			check += this->digestChain(signature[i], blocks[i]);
 		}
 
 		check = this->digest(check);
 		
-		if( this->public_key.toHex().compare(check.toHex()) == 0 )
+		//TODO( We can improve this using xor and vactor iterator)
+		if( std::to_string(this->public_key).compare(std::to_string(check)) == 0 )
 			return true;
 
 		return false;
@@ -137,7 +141,8 @@ public:
 			sum += W -1 - b;
 		std::stringstream ss;
 		ss << std::hex << sum;
-		std::vector<unsigned int> ret = ByteArray::fromHex(ss.str()).toBaseW(W);
+		ByteArray aux = hstoba(ss.str());
+		std::vector<unsigned int> ret = this->toBaseW(aux);
 		int rm = ret.size() - this->t2();
 		if(rm > 0) {
 			ret.erase(ret.begin(), ret.begin()+rm);
@@ -170,7 +175,7 @@ protected:
 		ByteArray pub;
 		const unsigned int S = W - 1;
 		for(long unsigned int i = 0; i < this->private_key.size(); i++)
-			pub = pub + this->digestChain(this->private_key[i], S);
+			pub += this->digestChain(this->private_key[i], S);
 		this->public_key = this->digest(pub);
 	};
 
@@ -198,6 +203,7 @@ protected:
 	};
 
 	std::vector<unsigned int> toBaseWBig(ByteArray& data) {
+		//TODO REVIEW, does this work?
 		const unsigned int bytes_per_block = block_size/8;
 		std::vector<unsigned int> ret;
 		unsigned int total = 0;
@@ -205,7 +211,8 @@ protected:
 
 		for(unsigned int i=0; i < data.size(); i++) {
 			s = (bytes_per_block-1) - (i%bytes_per_block);
-			total += (data.at(i)<< s) & ( (1<<block_size)-1);
+			//total += (data.at(i)<< s) & ( (1<<block_size)-1);
+			total += (std::to_integer<unsigned int>(data[i])<< s) & ( (1<<block_size)-1);
 			if( (i+1)%bytes_per_block == 0){
 				ret.push_back(total);
 				total = 0;
@@ -224,7 +231,7 @@ protected:
 
 		for ( consumed = 0; consumed < out_len; consumed++ ) {
 			if ( bits == 0 ) {
-				total = data.at(in);
+				total = std::to_integer<unsigned int>(data[in]);
 				in++;
 				bits += 8;
 			}
