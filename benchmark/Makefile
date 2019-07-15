@@ -1,10 +1,9 @@
-LIBOBJECT = ../libpq.so
 CC = g++ -fopenmp
 INCLUDES = -I. -I../pqcrypto
-CPPFLAGS = -std=c++11
+CPPFLAGS = -std=c++17
 CXXFLAGS = -g -O3 -Wall
 EXECUTABLE = test.out
-LIBS = -pthread -lbenchmark -lcrypto -lgmpxx -lgmp $(LIBOBJECT)
+LIBS = -pthread -lbenchmark -lcrypto -lgmpxx -lgmp
 SRC_DIR = src
 SRCS += $(wildcard $(SRC_DIR)/*.cpp)
 APPS = $(SRCS:$(SRC_DIR)/%.cpp=%.out)
@@ -15,13 +14,10 @@ APPS = $(SRCS:$(SRC_DIR)/%.cpp=%.out)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-all: check-lib $(APPS)
+all: $(APPS)
 	@echo 'Build complete!'
 	@echo ' '
 
-check-lib:
-	@test -s $(LIBOBJECT) || { echo "You should compile the lib first!"; exit 1; }
-	
 benchmark: all
 	@echo 'Running ALL benchmarks'
 	$(foreach var, $(APPS), ./$(var);)

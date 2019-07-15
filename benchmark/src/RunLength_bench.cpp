@@ -15,7 +15,7 @@ public:
 	int R;
 	virtual void SetUp(benchmark::State& state) {
 		ots = new OTS();
-		data = ByteArray::fromString("My document");
+		data = hstoba("0102030F");
 		ots->loadKeys();
 		signature = ots->sign(this->data);
 		signature = ots->sign2(this->data).first;

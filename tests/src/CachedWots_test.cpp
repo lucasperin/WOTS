@@ -109,14 +109,14 @@ TEST(CachedWots_test, load_keys_256_OpenSSLSha256) {
 TEST(CachedWots_test, sign_4_OpenSSLSha256) {
 	CWOTS_256_4 wots;
 	wots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = wots.sign(data);
 }
 
 TEST(CachedWots_test, sign_and_verify_4_OpenSSLSha256) {
 	CWOTS_256_4 wots;
 	wots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = wots.sign(data);
 	ASSERT_EQ(wots.verify(data, sig), true);
 }
@@ -124,14 +124,14 @@ TEST(CachedWots_test, sign_and_verify_4_OpenSSLSha256) {
 TEST(CachedWots_test, sign_16_OpenSSLSha256) {
 	CWOTS_256_16 wots;
 	wots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = wots.sign(data);
 }
 
 TEST(CachedWots_test, sign_and_verify_16_OpenSSLSha256) {
 	CWOTS_256_16 wots;
 	wots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = wots.sign(data);
 	ASSERT_EQ(wots.verify(data, sig), true);
 }
@@ -139,14 +139,14 @@ TEST(CachedWots_test, sign_and_verify_16_OpenSSLSha256) {
 TEST(CachedWots_test, sign_256_OpenSSLSha256) {
 	CWOTS_256_256 wots;
 	wots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = wots.sign(data);
 }
 
 TEST(CachedWots_test, sign_and_verify_256_OpenSSLSha256) {
 	CWOTS_256_256 wots;
 	wots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = wots.sign(data);
 	ASSERT_EQ(wots.verify(data, sig), true);
 }

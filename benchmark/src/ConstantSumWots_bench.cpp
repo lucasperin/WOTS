@@ -1,6 +1,8 @@
 #include <benchmark/benchmark.h>
 #include "wots/ConstantSumWots.h"
+#include "wots/MConstantSumWots.h"
 #include "wots/CachedConstantSumWots.h"
+#include "wots/MCachedConstantSumWots.h"
 #include "primitives/OpenSSLSha256.h"
 #include "primitives/OpenSSLSha512.h"
 
@@ -14,7 +16,7 @@ public:
 	OTS ots;
 	ByteArray fp;
 	virtual void SetUp(benchmark::State& state) {
-		data = ByteArray::fromString("My document");
+		data = hstoba("0102030F");
 		ots.loadKeys();
 		signature = ots.sign(this->data);
 		OpenSSLSha256 md;
@@ -116,7 +118,20 @@ BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_4, ConstantSumWots<OpenSSLSha256,
 	}
 }
 
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_4_M, MConstantSumWots<OpenSSLSha256, 4, 140, 143>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.sign(this->data);
+	}
+}
+
 BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_4_C, CachedConstantSumWots<OpenSSLSha256, 4, 140, 143>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.sign(this->data);
+	}
+}
+
+
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_4_C_M, MCachedConstantSumWots<OpenSSLSha256, 4, 140, 143>)(benchmark::State& state) {
 	for (auto _ : state){
 		this->ots.sign(this->data);
 	}
@@ -134,13 +149,50 @@ BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_16_C, CachedConstantSumWots<OpenS
 	}
 }
 
-BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256, ConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_2k, ConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
 	for (auto _ : state){
 		this->ots.sign(this->data);
 	}
 }
 
-BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_C, CachedConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_2k_M, MConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.sign(this->data);
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_2k_C, CachedConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.sign(this->data);
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_C_2k_M, MCachedConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.sign(this->data);
+	}
+}
+
+
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_1k, ConstantSumWots<OpenSSLSha256, 256, 43, 1108>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.sign(this->data);
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_1k_M, MConstantSumWots<OpenSSLSha256, 256, 43, 1108>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.sign(this->data);
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_1k_C, CachedConstantSumWots<OpenSSLSha256, 256, 43, 1108>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.sign(this->data);
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_256_C_1k_M, MCachedConstantSumWots<OpenSSLSha256, 256, 43, 1108>)(benchmark::State& state) {
 	for (auto _ : state){
 		this->ots.sign(this->data);
 	}
@@ -196,7 +248,25 @@ BENCHMARK_TEMPLATE_F(OTSFixture, VERIFICATION_256_16, ConstantSumWots<OpenSSLSha
 	}
 }
 
-BENCHMARK_TEMPLATE_F(OTSFixture, VERIFICATION_256_256, ConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+BENCHMARK_TEMPLATE_F(OTSFixture, VERIFICATION_256_256_2k, ConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.verify(this->data, this->signature);
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, VERIFICATION_256_256_2k_M, MConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.verify(this->data, this->signature);
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, VERIFICATION_256_256_1k, ConstantSumWots<OpenSSLSha256, 256, 43, 1108>)(benchmark::State& state) {
+	for (auto _ : state){
+		this->ots.verify(this->data, this->signature);
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, VERIFICATION_256_256_1k_M, MConstantSumWots<OpenSSLSha256, 256, 43, 1108>)(benchmark::State& state) {
 	for (auto _ : state){
 		this->ots.verify(this->data, this->signature);
 	}

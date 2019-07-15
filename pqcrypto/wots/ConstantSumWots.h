@@ -33,7 +33,7 @@ protected:
 		return ret;
 	}
 
-	mpz_class constantSumLen(unsigned int blocks, unsigned int max, unsigned int sum) {
+	virtual mpz_class constantSumLen(unsigned int blocks, unsigned int max, unsigned int sum) {
 		//TODO
 		//Assert ret >= 0
 		mpz_class ret = 0;
@@ -52,7 +52,7 @@ protected:
 	 * COULD (but wont) assert that i <= constantSumLen(blocks,max,sum)
 	 * Asserting this here would ruin benchmark results.
 	 */
-	std::vector<unsigned int> toConstantSum(mpz_class& i, 
+	virtual std::vector<unsigned int> toConstantSum(mpz_class& i, 
 			unsigned int blocks, unsigned int max, unsigned int sum) 
 	{
 		if (blocks == 1)

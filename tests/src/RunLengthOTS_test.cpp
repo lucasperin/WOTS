@@ -60,7 +60,7 @@ TEST(RunLengthOTS_test, print_key) {
 TEST(RunLengthOTS_test, sign_OpenSSLSha256) {
 	RunLengthOTS<OpenSSLSha256> ots;
 	ots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = ots.sign(data);
 }
 
@@ -68,7 +68,7 @@ TEST(RunLengthOTS_test, sign_OpenSSLSha256) {
 TEST(RunLengthOTS_test, sign_OpenSSLSha512) {
 	RunLengthOTS<OpenSSLSha512> ots;
 	ots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = ots.sign(data);
 }
 */
@@ -76,7 +76,7 @@ TEST(RunLengthOTS_test, sign_OpenSSLSha512) {
 TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha256) {
 	RunLengthOTS<OpenSSLSha256> ots;
 	ots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = ots.sign(data);
 	ASSERT_EQ(ots.verify(data, sig), true);
 }
@@ -85,7 +85,7 @@ TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha256) {
 TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha512) {
 	RunLengthOTS<OpenSSLSha512> ots;
 	ots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = ots.sign(data);
 	ASSERT_EQ(ots.verify(data, sig), true);
 }
@@ -94,7 +94,7 @@ TEST(RunLengthOTS_test, sign_and_verify_OpenSSLSha512) {
 TEST(RunLengthOTS_test, sign_and_verify_R_OpenSSLSha256) {
 	RunLengthOTS<OpenSSLSha256> ots;
 	ots.loadKeys();
-	ByteArray data = hstoba("My document");
+	ByteArray data = hstoba("0102030F");
 	std::pair<std::vector<ByteArray>,int> sig = ots.sign2(data);
 	ASSERT_EQ(ots.verify(data, sig.first, sig.second), true);
 }

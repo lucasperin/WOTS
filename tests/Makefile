@@ -1,11 +1,9 @@
-LIBOBJECT = ../libpq.so
-
 INCLUDES = -I../pqcrypto
 CC = g++
 CPPFLAGS = -std=c++17 -DDEBUG --coverage
 CXXFLAGS = -g -O0
 EXECUTABLE = test.out
-LIBS = -pthread -lgtest -lcrypto -lgmpxx -lgmp $(LIBOBJECT)
+LIBS = -pthread -lgtest -lcrypto -lgmpxx -lgmp
 SRC_DIR = src
 TEST_SRCS += $(wildcard $(SRC_DIR)/*.cpp)
 OBJS += $(TEST_SRCS:.cpp=.o)
@@ -16,13 +14,10 @@ OBJS += $(TEST_SRCS:.cpp=.o)
 	@echo 'Finished building: $<'
 	@echo ' '
 
-all: check-lib $(OBJS)
+all: $(OBJS)
 	$(CC) $(CPPFLAGS) $(CXXFLAGS) -o $(EXECUTABLE) $(OBJS) $(LIBS)
 	@echo 'Build complete!'
 	@echo ' '
-
-check-lib:
-	@test -s $(LIBOBJECT) || { echo "You should compile the lib first!"; exit 1; }
 	
 test:	all
 	@echo 'Executing tests...'

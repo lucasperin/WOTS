@@ -13,15 +13,15 @@ public:
 		int aux = state.range(0);
 		if(aux)
 			it = aux;
-		const std::string test = "test";
-		data = ByteArray::fromString(test);
+		const std::string test = "010203";
+		data = hstoba(test);
 	}
 };
 
 BENCHMARK_TEMPLATE_DEFINE_F(OpenSSLFixture, OpenSSLDigestChain, OpenSSLSha256)(benchmark::State& state) {
 	ByteArray h;
-		const std::string test = "test";
-		data = ByteArray::fromString(test);
+		const std::string test = "010203";
+		data = hstoba(test);
 	for (auto _ : state){
 		benchmark::DoNotOptimize
 		(

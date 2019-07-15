@@ -14,7 +14,7 @@ public:
 	OTS ots;
 	ByteArray fp;
 	virtual void SetUp(benchmark::State& state) {
-		data = ByteArray::fromString("My document");
+		data = hstoba("0102030f");
 		ots.loadKeys();
 		signature = ots.sign(this->data);
 		OpenSSLSha256 md;
