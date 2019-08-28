@@ -128,16 +128,16 @@ if __name__ == '__main__':
     #test_sum_equals_maxi(T_len)
     #test_sum_larger_than_maxi(T_len)
 
-    blocks = 80
+    #t
+    blocks = 36
+    #n
     maxi = 255
-    block_max = 255
-    #block_sum = floor((blocks*block_max)*0.5)
-    block_sum = 4000
-    #print(int(T_len(blocks, maxi, block_sum)))
-    #print(log(T_len(blocks, maxi, block_sum), 2))
-    #print(floor(log(T_len(blocks, maxi, block_sum),2)), block_sum, (blocks*block_max) - block_sum, block_sum + (blocks*block_max) - block_sum)
+    #s
+    block_sum = 2000
+    print(int(T_len(blocks, maxi, block_sum)))
+    print(log(T_len(blocks, maxi, block_sum), 2))
 
-    for i in range(1,2):
+    for i in range(1,4):
         print(map_to_const_sum(i, blocks, maxi, block_sum))
 
 
