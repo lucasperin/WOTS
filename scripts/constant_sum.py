@@ -123,11 +123,12 @@ if __name__ == "__main__":
     # s
     block_sum = 1972
 
-    tlen = T_len(blocks, maxi, block_sum)
-    print(int(tlen), log(tlen, 2))
+    #tlen = T_len(blocks, maxi, block_sum)
+    #print(int(tlen), log(tlen, 2))
 
     for i in range(1, 1000):
         I = int.from_bytes(hashlib.sha256(bytes(i)).digest(), byteorder='big')
-        print(map_to_const_sum(I, blocks, maxi, block_sum))
+        #print(map_to_const_sum(I, blocks, maxi, block_sum))
+        map_to_const_sum(I, blocks, maxi, block_sum)
 
     print("Done!")
