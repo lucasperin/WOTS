@@ -119,7 +119,7 @@ if __name__ == "__main__":
     # t
     blocks = 37
     # n
-    maxi colocaNone no T_len= 255
+    maxi = 255
     # s
     block_sum = 1972
 
