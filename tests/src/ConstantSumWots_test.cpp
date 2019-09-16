@@ -10,125 +10,127 @@
 //using WOTS_512_4 = ConstantSumWots<OpenSSLSha512,4>;
 //using WOTS_256_16 =ConstantSumWots<OpenSSLSha256,16>;
 //using WOTS_512_16 =ConstantSumWots<OpenSSLSha512,16>;
-using WOTS_256_256_35_4462 = ConstantSumWots<OpenSSLSha256,256,35,4462>;
-using WOTS_256_256_37_1972 = ConstantSumWots<OpenSSLSha256,256,37,1972>;
-using CWOTS_256_256_35_4462 = CachedConstantSumWots<OpenSSLSha256,256,35,4462>;
+using WOTS_SHA256_255_34_3106 = ConstantSumWots<OpenSSLSha256,255,34,3106>;
+
+using WOTS_SHA256_255_55_534 = ConstantSumWots<OpenSSLSha256,255,55,534>;
+
+using CWOTS_SHA256_255_34_3106 = CachedConstantSumWots<OpenSSLSha256,255,34,3106>;
 //using WOTS_512_256 =ConstantSumWots<OpenSSLSha512,256>;
 //using WOTS_256_65536 = ConstantSumWots<OpenSSLSha256,65536>;
 //using WOTS_512_65536 = ConstantSumWots<OpenSSLSha512,65536>;
 
 
-TEST(ConstantSumWots_test, constructor_256_256_35_4462) {
+TEST(ConstantSumWots_test, constructor_256_255_34_3106) {
 	ASSERT_EXIT(
 	{
-	{WOTS_256_256_35_4462 w;}
+	{WOTS_SHA256_255_34_3106 w;}
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, constructor_256_256_35_4462_C) {
+TEST(ConstantSumWots_test, constructor_256_255_34_3106_C) {
 	ASSERT_EXIT(
 	{
-	{CWOTS_256_256_35_4462 w;}
+	{CWOTS_SHA256_255_34_3106 w;}
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, constructor_256_256_37_1972) {
+TEST(ConstantSumWots_test, constructor_256_255_55_534) {
 	ASSERT_EXIT(
 	{
-	{WOTS_256_256_37_1972 w;}
+	{WOTS_SHA256_255_55_534 w;}
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, load_private_key_256_256_35_4462) {
+TEST(ConstantSumWots_test, load_private_key_256_255_34_3106) {
 	ASSERT_EXIT( {
-	WOTS_256_256_35_4462 w;
+	WOTS_SHA256_255_34_3106 w;
 	w.loadPrivateKey();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, load_private_key_256_256_35_4462_C) {
+TEST(ConstantSumWots_test, load_private_key_256_255_34_3106_C) {
 	ASSERT_EXIT( {
-	CWOTS_256_256_35_4462 w;
+	CWOTS_SHA256_255_34_3106 w;
 	w.loadPrivateKey();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, load_private_key_256_256_37_1972) {
+TEST(ConstantSumWots_test, load_private_key_256_255_55_534) {
 	ASSERT_EXIT( {
-	WOTS_256_256_37_1972 w;
+	WOTS_SHA256_255_55_534 w;
 	w.loadPrivateKey();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, load_keys_256_256_35_4462) {
+TEST(ConstantSumWots_test, load_keys_256_255_34_3106) {
 	ASSERT_EXIT( {
-	WOTS_256_256_35_4462 w;
+	WOTS_SHA256_255_34_3106 w;
 	w.loadKeys();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, load_keys_256_256_35_4462_C) {
+TEST(ConstantSumWots_test, load_keys_256_255_34_3106_C) {
 	ASSERT_EXIT( {
-	CWOTS_256_256_35_4462 w;
+	CWOTS_SHA256_255_34_3106 w;
 	w.loadKeys();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, load_keys_256_256_37_1972) {
+TEST(ConstantSumWots_test, load_keys_256_255_55_534) {
 	ASSERT_EXIT( {
-	WOTS_256_256_37_1972 w;
+	WOTS_SHA256_255_55_534 w;
 	w.loadKeys();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
 
-TEST(ConstantSumWots_test, sign_256_256_35_4462) {
-	WOTS_256_256_35_4462 w;
+TEST(ConstantSumWots_test, sign_256_255_34_3106) {
+	WOTS_SHA256_255_34_3106 w;
 	w.loadKeys();
 	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
-TEST(ConstantSumWots_test, sign_256_256_35_4462_C) {
-	CWOTS_256_256_35_4462 w;
+TEST(ConstantSumWots_test, sign_256_255_34_3106_C) {
+	CWOTS_SHA256_255_34_3106 w;
 	w.loadKeys();
 	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
-TEST(ConstantSumWots_test, sign_256_256_37_1972) {
-	WOTS_256_256_37_1972 w;
+TEST(ConstantSumWots_test, sign_256_255_55_534) {
+	WOTS_SHA256_255_55_534 w;
 	w.loadKeys();
 	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = w.sign(data);
 }
 
-TEST(ConstantSumWots_test, sign_and_verify_256_256_35_4462) {
-	WOTS_256_256_35_4462 w;
+TEST(ConstantSumWots_test, sign_and_verify_256_255_34_3106) {
+	WOTS_SHA256_255_34_3106 w;
 	w.loadKeys();
 	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = w.sign(data);
 	ASSERT_EQ(w.verify(data, sig), true);
 }
 
-TEST(ConstantSumWots_test, sign_and_verify_256_256_35_4462_C) {
-	CWOTS_256_256_35_4462 w;
+TEST(ConstantSumWots_test, sign_and_verify_256_255_34_3106_C) {
+	CWOTS_SHA256_255_34_3106 w;
 	w.loadKeys();
 	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = w.sign(data);
 	ASSERT_EQ(w.verify(data, sig), true);
 }
 
-TEST(ConstantSumWots_test, sign_and_verify_256_256_37_1972) {
-	WOTS_256_256_37_1972 w;
+TEST(ConstantSumWots_test, sign_and_verify_256_255_55_534) {
+	WOTS_SHA256_255_55_534 w;
 	w.loadKeys();
 	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = w.sign(data);

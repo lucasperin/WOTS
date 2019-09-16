@@ -18,7 +18,7 @@ protected:
 	void memoizeParams(){
 		for(unsigned int b = 1; b < T; b++) {
 			for(unsigned int s = 0; s<= S; s++) {
-				this->mparam[b-1][s] = ConstantSumWots<D,W,T,S>::constantSumLen(b,W-1,s);
+				this->mparam[b-1][s] = ConstantSumWots<D,W,T,S>::constantSumLen(b,W,s);
 			}
 		}
 	};

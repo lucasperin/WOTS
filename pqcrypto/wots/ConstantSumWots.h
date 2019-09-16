@@ -4,6 +4,7 @@
 #include <gmpxx.h>
 #include <math.h>
 #include <algorithm>
+#include <iostream>
 
 template <class D, int W, int T, int S>
 class ConstantSumWots : public virtual ClassicWots<D,W> {
@@ -18,17 +19,65 @@ public:
 		return dummy;
 	};
 
+
+	virtual const std::vector<ByteArray> sign(ByteArray& data) {
+		std::vector<unsigned int> blocks = this->genFingerprint(data);
+		std::vector<ByteArray> signature(blocks.size());
+
+		//#pragma omp parallel for
+		for(long unsigned int i = 0; i < blocks.size(); i++){
+			signature[i] = this->digestChain(this->private_key[i], W - blocks[i]);
+		}
+		
+		return signature;
+	};
+	
+	virtual bool verify(ByteArray& data, std::vector<ByteArray>& signature) {	
+		if(not this->pubKeyIsLoaded())
+			return false;
+		std::vector<unsigned int> blocks = this->genFingerprint(data);
+		ByteArray check;
+
+		//#pragma omp parallel for
+		for(long unsigned int i = 0; i < blocks.size(); i++) {
+			check += this->digestChain(signature[i], blocks[i]);
+		}
+
+		check = this->digest(check);
+		
+		//TODO( We can improve this using xor and vactor iterator)
+		if( std::to_string(this->public_key).compare(std::to_string(check)) == 0 )
+			return true;
+
+		return false;
+	};
+
+
 	std::vector<unsigned int> genFingerprint(ByteArray& data) final {
 		ByteArray aux = this->digest(data);
 		mpz_class i;
-		//TODO try other conversions for speed
 		i.set_str(std::to_string(aux), 16);
-		return this->toConstantSum(i, T, W-1, S);
+		auto ret = this->toConstantSum(i, T, W, S);
+		for (const auto i : ret)
+			std::cout << i << ' ';
+		std::cout<<std::endl;
+		return ret;
+		//return this->toConstantSum(i, T, W, S);
 		
 	};
 protected:
-	mpz_class binomial(unsigned int n, unsigned int k) {
-		mpz_class ret;
+	/*
+	 * Overide restriction of W power of 2.
+	 */
+	virtual void paramCheck() final {};
+
+	/*
+	 * Must be signed to asserct negative cases.
+	 */
+	mpz_class binomial(int n, int k) {
+		if(n < k || n<0 || k<0)
+			return 0;
+		mpz_class ret = 0;
 		mpz_bin_uiui(ret.get_mpz_t(), n, k);
 		return ret;
 	}
@@ -71,6 +120,15 @@ protected:
 		ret.insert(ret.end(), ret2.begin(), ret2.end());
 		return ret;
 	}
+
+	virtual void genPublicKey() {
+		this->loadPrivateKey();
+		ByteArray pub;
+		for(long unsigned int i = 0; i < this->private_key.size(); i++)
+			pub += this->digestChain(this->private_key[i], W);
+		this->public_key = this->digest(pub);
+	};
+
 
 };
 

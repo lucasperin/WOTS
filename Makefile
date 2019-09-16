@@ -1,4 +1,7 @@
 
+all:
+	$(MAKE) -C tests all
+
 test:
 	$(MAKE) -C tests test
 

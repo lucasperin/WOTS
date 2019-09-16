@@ -51,6 +51,7 @@ def block_average(w, fp):
     bst = BitArray(hex=fp.hex()).bin[2:]
     l = int(log2(w))
     blocks = [ int(bst[i:i+l],2) for i in range(0,len(bst), l) ]
+    print(blocks)
     return mean(blocks)
     
 
@@ -62,17 +63,20 @@ if __name__ == '__main__':
     mu = 2**7
     m = 256
 
+    print(t_1(m,w))
+    print(t_2(m,w))
+
     avgs = [ block_average(w, fingerprint(bytes(h))) for h in range(1000)]
     print(min(avgs), mean(avgs), max(avgs))
 
     #Print the min, mean and max averages for fingerprint_r
-    avgs = [ block_average(w, fingerprint_r(bytes(h), w, 1000)[0]) for h in range(1000)]
-    print(min(avgs), mean(avgs), max(avgs))
+    #avgs = [ block_average(w, fingerprint_r(bytes(h), w, 1000)[0]) for h in range(1000)]
+    #print(min(avgs), mean(avgs), max(avgs))
 
-    avgs = [ fingerprint_r(bytes(h), w, 1000)[1] for h in range(1000)]
-    print(min(avgs), mean(avgs), max(avgs))
+    #avgs = [ fingerprint_r(bytes(h), w, 1000)[1] for h in range(1000)]
+    #print(min(avgs), mean(avgs), max(avgs))
 
-    avgs = [ block_average(w, fingerprint_rt(bytes(h), w, 1000, mu*1.3)[0]) for h in range(1000)]
-    print(min(avgs), mean(avgs), max(avgs))
-    avgs = [ fingerprint_rt(bytes(h), w, 1000, mu*1.3)[1] for h in range(1000)]
-    print(min(avgs), mean(avgs), max(avgs))
+    #avgs = [ block_average(w, fingerprint_rt(bytes(h), w, 1000, mu*1.3)[0]) for h in range(1000)]
+    #print(min(avgs), mean(avgs), max(avgs))
+    #avgs = [ fingerprint_rt(bytes(h), w, 1000, mu*1.3)[1] for h in range(1000)]
+    #print(min(avgs), mean(avgs), max(avgs))

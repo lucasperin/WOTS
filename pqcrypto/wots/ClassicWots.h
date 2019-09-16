@@ -14,7 +14,7 @@ class ClassicWots <D, W, typename std::enable_if<std::is_base_of<AbstractDigest,
 
 public:
 	ClassicWots() {
-		static_assert( W == 4 || W == 16 || W == 256 || W == 65536, "Winternitz Parameter W not supported.");
+		paramCheck();
 		this->current_state = ClassicWots::INITIALIZED;
 		block_size = std::ceil(log2(W));
 		if(private_seed.size()==0)
@@ -161,6 +161,10 @@ public:
 	};
 
 protected:
+
+	virtual void paramCheck() {
+		//static_assert( W == 4 || W == 16 || W == 256 || W == 65536, "Winternitz Parameter W not supported.");
+	};
 
 	virtual void genPrivateKey() {
 		const unsigned int key_len = this->t();

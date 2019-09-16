@@ -33,13 +33,33 @@ def T_len(blocks, maxi, block_sum=None):
 
     kmax = min(blocks, floor(block_sum / (maxi + 1)))
     t = 0
-
     for k in range(kmax + 1):
         t += (
             (-1) ** k
             * binomial(blocks, k)
             * binomial(block_sum - (maxi + 1) * k + blocks - 1, blocks - 1)
         )
+
+    return t
+
+@lru_cache(maxsize=None)
+def T_len_test(blocks, maxi, block_sum=None):
+    """
+    New equation for |T_{t,w}|, if block_sum is not given, will assume
+    original behavior with maxi = block_sum
+    @param blocks is the number of blocks the map has
+    @param maxi is the largest integer inside a block (0, ..., maxi)
+    @param block_sum is the sum of the blocks
+    TODO: Assert maxi <= block_sum?
+    """
+    if block_sum is None:
+        block_sum = maxi
+
+    kmax = min(blocks, floor(block_sum / (maxi + 1)))
+    t = 0
+
+    for k in range(kmax + 1):
+        t +=  binomial(block_sum - (maxi + 1) * k + blocks - 1, block_sum - (maxi+1) * k) * ((( -1) ** kmax)  * binomial(blocks-1, kmax))
 
     return t
 
@@ -68,17 +88,17 @@ def bj(j, blocks, maxi, block_sum=None):
     assert j >= 0
     if block_sum is None:
         block_sum = maxi
-    kmax = min(blocks, floor(block_sum / (maxi + 1)))
-    return reduce(
-        lambda t, k: t
-        + binomial(blocks, k)
-        * (
-            binomial(block_sum - (maxi + 1) * k + blocks, blocks)
+    kmax = min(blocks, floor((block_sum) / (maxi + 1)))
+    print("kmax = %d"%kmax)
+
+    t = 0
+    for k in range(0, kmax + 1):
+        t+= ((-1)**k) * binomial(blocks, k) * (
+              binomial(block_sum - (maxi + 1) * k + blocks, blocks)
             - binomial(block_sum - (maxi + 1) * k + blocks - 1 - j, blocks)
         )
-        * (-1) ** k,
-        [0] + list(range(0, kmax + 1)),
-    )
+
+    return t
 
 
 def original_map_to_const_sum(i, blocks, maxi):
@@ -112,23 +132,25 @@ def map_to_const_sum(i, blocks, maxi, block_sum=None):
 
 
 if __name__ == "__main__":
-    # test_sum_equals_maxi(original_T_len)
-    # test_sum_equals_maxi(T_len)
-    # test_sum_larger_than_maxi(T_len)
 
     # t
-    blocks = 37
+    blocks = 5
     # n
-    maxi = 255
+    maxi = 20
     # s
-    block_sum = 1972
+    block_sum = 35
 
-    #tlen = T_len(blocks, maxi, block_sum)
-    #print(int(tlen), log(tlen, 2))
+    tlen = T_len(blocks, maxi, block_sum)
+    print(int(tlen))
+    print(log(tlen, 2))
+    #for i in range(10):
+        #m = maxi + i
+        #tlen = T_len(blocks, m, m)
+        #print(m, log(tlen, 2))
 
-    for i in range(1, 1000):
-        I = int.from_bytes(hashlib.sha256(bytes(i)).digest(), byteorder='big')
-        #print(map_to_const_sum(I, blocks, maxi, block_sum))
-        map_to_const_sum(I, blocks, maxi, block_sum)
+    #for i in range(1, 1000):
+    #    I = int.from_bytes(hashlib.sha256(bytes(i)).digest(), byteorder='big')
+    #    #print(map_to_const_sum(I, blocks, maxi, block_sum))
+    #    map_to_const_sum(I, blocks, maxi, block_sum)
 
     print("Done!")
