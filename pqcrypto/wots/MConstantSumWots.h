@@ -23,11 +23,10 @@ protected:
 		}
 	};
 
-	mpz_class constantSumLen(unsigned int blocks, unsigned int max, unsigned int sum) {
+	mpz_class constantSumLen(int blocks, int max, int sum) {
 		return this->mparam[blocks-1][sum];
 	};
 
-	//std::unordered_map<unsigned int, std::unordered_map<unsigned int, mpz_class> > mparam;
 	std::array<std::array<mpz_class, S+1>, T-1> mparam;
 };
 

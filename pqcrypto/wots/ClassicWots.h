@@ -4,6 +4,7 @@
 #include "primitives/AbstractDigest.h"
 #include "utils/ByteArray.hpp"
 #include <sstream>
+#include <iostream>
 #include <math.h>
 
 template<class D, int W, class Enable = void>
@@ -38,7 +39,7 @@ public:
 
 	virtual const unsigned int t2() const noexcept {
 		float u = (log2(t1()*(W-1)))/(float)this->block_size;
-		return (const unsigned int) floor(u) + 1;
+		return (const unsigned int) std::floor(u) + 1;
 	};
 
 	virtual const unsigned int w() const noexcept {

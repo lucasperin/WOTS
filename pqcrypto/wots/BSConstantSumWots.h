@@ -6,11 +6,11 @@
 template <class D, int W, int T, int S>
 class BSConstantSumWots : public virtual ConstantSumWots<D, W, T, S> {
 	public:
-	mpz_class prank(unsigned int blocks, unsigned int max, unsigned int sum, unsigned int j) {
+	mpz_class prank(int blocks, int max, int sum, int j) {
 		return this->rank(blocks, max, sum, j);
 	};
 
-	mpz_class pconst(unsigned int blocks, unsigned int max, unsigned int sum) {
+	mpz_class pconst(int blocks, int max, int sum) {
 		return this->constantSumLen(blocks, max, sum);
 	};
 
@@ -34,7 +34,7 @@ protected:
 	 * https://en.cppreference.com/w/cpp/algorithm/lower_bound
 	 */
 	virtual std::vector<unsigned int> toConstantSum(mpz_class& I,
-			unsigned int blocks, unsigned int max, unsigned int sum)
+			int blocks, int max, int sum)
 	{
 		//Surpress
 		(void)blocks;

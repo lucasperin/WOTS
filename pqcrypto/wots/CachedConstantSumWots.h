@@ -24,6 +24,11 @@ public:
 		
 		return signature;
 	};
+	
+	virtual void clearPublicKey() {
+		cache.clear();
+		ConstantSumWots<D,W,T,S>::clearPublicKey();
+	};
 
 protected:
 
@@ -31,7 +36,7 @@ protected:
 		this->loadPrivateKey();
 		ByteArray pub;
 		this->cache = std::vector<ByteArray>(this->private_key.size());
-		const unsigned int C = W/2;
+		const int C = W/2;
 		for(long unsigned int i = 0; i < this->private_key.size(); i++){
 			this->cache[i] = this->digestChain(this->private_key[i], C);
 			pub += this->digestChain(this->cache[i], W-C);

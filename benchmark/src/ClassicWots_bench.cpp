@@ -22,6 +22,8 @@ public:
 	}
 };
 
+// Key Generation benchmark
+
 BENCHMARK_TEMPLATE_F(OTSFixture, PRIV_KEY_256_4, ClassicWots<OpenSSLSha256, 4>)(benchmark::State& state) {
 	for (auto _ : state){
 		this->ots.clearKeys();
@@ -106,6 +108,8 @@ BENCHMARK_TEMPLATE_F(OTSFixture, PUBLIC_KEY_512_256, ClassicWots<OpenSSLSha512, 
 	}
 }
 
+// Signature benchmark
+
 BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_256_4, ClassicWots<OpenSSLSha256, 4>)(benchmark::State& state) {
 	for (auto _ : state){
 		this->ots.sign(this->data);
@@ -177,6 +181,8 @@ BENCHMARK_TEMPLATE_F(OTSFixture, SIGNATURE_512_256_C, CachedWots<OpenSSLSha512, 
 		this->ots.sign(this->data);
 	}
 }
+
+//Signature Verification Benchmark
 
 BENCHMARK_TEMPLATE_F(OTSFixture, VERIFICATION_256_4, ClassicWots<OpenSSLSha256, 4>)(benchmark::State& state) {
 	for (auto _ : state){

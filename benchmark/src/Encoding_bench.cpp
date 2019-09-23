@@ -7,6 +7,14 @@
 #include "primitives/OpenSSLSha256.h"
 #include "primitives/OpenSSLSha512.h"
 
+using OCS_34 = ConstantSumWots<OpenSSLSha256,2832,34,2832>;
+using OCS_55 = ConstantSumWots<OpenSSLSha256,534,55,534>;
+using CS_34 = ConstantSumWots<OpenSSLSha256,255,34,3106>;
+using CS_55 = ConstantSumWots<OpenSSLSha256,255,55,534>;
+using MCS_34 = MConstantSumWots<OpenSSLSha256,255,34,3106>;
+using MCS_55 = MConstantSumWots<OpenSSLSha256,255,55,534>;
+using BSCS_34 = BSConstantSumWots<OpenSSLSha256,255,34,3106>;
+using BSCS_55 = BSConstantSumWots<OpenSSLSha256,255,55,534>;
 
 template<class OTS>
 class OTSFixture : public benchmark::Fixture, protected OpenSSLSha256 {
@@ -18,14 +26,6 @@ public:
 	}
 };
 
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_4, ClassicWots<OpenSSLSha256, 4>)(benchmark::State& state) {
-	std::vector<unsigned int> a;
-	for (auto _ : state){
-		data = digest(data);
-		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
-	}
-}
-
 BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_16, ClassicWots<OpenSSLSha256, 16>)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
@@ -35,14 +35,6 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_16, ClassicWots<OpenSSLSha256, 16>
 }
 
 BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256, ClassicWots<OpenSSLSha256, 256>)(benchmark::State& state) {
-	std::vector<unsigned int> a;
-	for (auto _ : state){
-		data = digest(data);
-		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
-	}
-}
-
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_512_4, ClassicWots<OpenSSLSha512, 4>)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
 		data = digest(data);
@@ -66,17 +58,10 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_512_256, ClassicWots<OpenSSLSha512, 25
 	}
 }
 
-/*
- * Nao sei pq nao funciona.. trava em loop
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_4_129_193, ConstantSumWots<OpenSSLSha256, 4, 129, 194>)(benchmark::State& state) {
-	std::vector<unsigned int> a;
-	for (auto _ : state){
-		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
-	}
-}
-*/
+//ORIGINAL CONSTANT SUM ENCODING
 
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_16_66_495, ConstantSumWots<OpenSSLSha256, 16, 66, 495>)(benchmark::State& state) {
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_34_2832, OCS_34)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
 		data = digest(data);
@@ -84,7 +69,7 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_16_66_495, ConstantSumWots<OpenSSL
 	}
 }
 
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_35_4462, ConstantSumWots<OpenSSLSha256, 256, 35, 4462>)(benchmark::State& state) {
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_55_534, OCS_55)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
 		data = digest(data);
@@ -92,7 +77,19 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_35_4462, ConstantSumWots<OpenS
 	}
 }
 
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_37_1972, ConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+
+
+// CONSTANT SUM ENCODING
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_34_3106, CS_34)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_55_534, CS_55)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
 		data = digest(data);
@@ -103,7 +100,7 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_37_1972, ConstantSumWots<OpenS
 
 //MEMOIZED CONSTANT SUM ENCODING
 
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_16_66_495_M, MConstantSumWots<OpenSSLSha256, 16, 66, 495>)(benchmark::State& state) {
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_34_3106_M, MCS_34)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
 		data = digest(data);
@@ -111,15 +108,7 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_16_66_495_M, MConstantSumWots<Open
 	}
 }
 
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_35_4462_M, MConstantSumWots<OpenSSLSha256, 256, 35, 4462>)(benchmark::State& state) {
-	std::vector<unsigned int> a;
-	for (auto _ : state){
-		data = digest(data);
-		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
-	}
-}
-
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_37_1972_M, MConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_55_534_M, MCS_55)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
 		data = digest(data);
@@ -130,7 +119,7 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_37_1972_M, MConstantSumWots<Op
 
 //Memoized Binary Search CONSTANT SUM ENCODING
 
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_16_66_495_BS, BSConstantSumWots<OpenSSLSha256, 16, 66, 495>)(benchmark::State& state) {
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_34_3106_BS, BSCS_34)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
 		data = digest(data);
@@ -138,15 +127,7 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_16_66_495_BS, BSConstantSumWots<Op
 	}
 }
 
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_35_4462_BS, BSConstantSumWots<OpenSSLSha256, 256, 34, 4462>)(benchmark::State& state) {
-	std::vector<unsigned int> a;
-	for (auto _ : state){
-		data = digest(data);
-		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
-	}
-}
-
-BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_256_37_1972_BS, BSConstantSumWots<OpenSSLSha256, 256, 37, 1972>)(benchmark::State& state) {
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_55_534_BS, BSCS_55)(benchmark::State& state) {
 	std::vector<unsigned int> a;
 	for (auto _ : state){
 		data = digest(data);

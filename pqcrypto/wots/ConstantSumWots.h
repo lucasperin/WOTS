@@ -1,8 +1,7 @@
-#ifndef CONSTANTSUM_WOTS
-#define CONSTANTSUM_WOTS
+#pragma once
 #include "wots/ClassicWots.h"
-#include <gmpxx.h>
 #include <math.h>
+#include <gmpxx.h>
 #include <algorithm>
 #include <iostream>
 
@@ -57,12 +56,16 @@ public:
 		ByteArray aux = this->digest(data);
 		mpz_class i;
 		i.set_str(std::to_string(aux), 16);
-		auto ret = this->toConstantSum(i, T, W, S);
-		for (const auto i : ret)
-			std::cout << i << ' ';
-		std::cout<<std::endl;
+		std::vector<unsigned int> ret;
+		if(W==S) {
+			ret = this->toConstantSumOriginal(i, T, S);
+		} else {
+			ret = this->toConstantSum(i, T, W, S);
+		}
+		//for (const auto i : ret)
+			//std::cout << i << ' ';
+		//std::cout<<std::endl;
 		return ret;
-		//return this->toConstantSum(i, T, W, S);
 		
 	};
 protected:
@@ -82,18 +85,15 @@ protected:
 		return ret;
 	}
 
-	virtual mpz_class constantSumLen(unsigned int blocks, unsigned int max, unsigned int sum) {
+	virtual mpz_class constantSumLen(int blocks, int max, int sum) {
 		//TODO
 		//Assert ret >= 0
 		mpz_class ret = 0;
-		unsigned int aux = floor(sum/(max+1));
-		unsigned int kmax = std::min(blocks, aux);
-		//assert(kmax >=0);
-		for( unsigned int k = 0; k <= kmax; k++ ) {
+		int aux = std::floor((float)sum/(float)(max+1));
+		int kmax = std::min(blocks, aux);
+		for(int k = 0; k <= kmax; k++ ) {
 			ret += binomial(blocks, k) * binomial(sum - (max+1)*k + blocks -1, blocks - 1) * ((k%2 == 0)?1:-1);
-		//ret += binomial(blocks, k) * binomial(sum - (max+1)*k + blocks -1, blocks - 1) * std::pow(-1,k);
 		}
-		//assert(ret >= 0);
 		return ret;
 	}
 
@@ -102,10 +102,10 @@ protected:
 	 * Asserting this here would ruin benchmark results.
 	 */
 	virtual std::vector<unsigned int> toConstantSum(mpz_class& i, 
-			unsigned int blocks, unsigned int max, unsigned int sum) 
+			int blocks, int max, int sum) 
 	{
 		if (blocks == 1)
-			return {sum};
+			return {(unsigned int)sum};
 		unsigned int k = 0;
 		mpz_class left = 0;
 		mpz_class right = constantSumLen(blocks - 1, max, sum);
@@ -121,6 +121,30 @@ protected:
 		return ret;
 	}
 
+	/*
+	 * Original implementation from paper.
+	 */
+	virtual std::vector<unsigned int> toConstantSumOriginal(mpz_class& i, int blocks, int sum) 
+	{
+		if (blocks == 1)
+			return {(unsigned)sum};
+		unsigned int k = 0;
+		mpz_class a = 1;
+		mpz_class left = 0;
+		mpz_class right = a;
+		while ( !(i>= left && i < right) ) {
+			k++; 
+			a = a*(k+blocks-2)/k;
+			left=right;
+			right += a;
+		}
+		std::vector<unsigned int> ret = {sum-k};
+		i -= left;
+		std::vector<unsigned int> ret2 = toConstantSumOriginal(i, blocks - 1, k);
+		ret.insert(ret.end(), ret2.begin(), ret2.end());
+		return ret;
+	}
+
 	virtual void genPublicKey() {
 		this->loadPrivateKey();
 		ByteArray pub;
@@ -129,7 +153,10 @@ protected:
 		this->public_key = this->digest(pub);
 	};
 
+	virtual void genPrivateKey() {
+		for(unsigned int i = 0; i < T; i++) {
+			this->private_key.push_back(this->digest(this->private_seed));
+		}
+	};
 
 };
-
-#endif
