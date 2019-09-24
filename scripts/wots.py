@@ -59,15 +59,15 @@ if __name__ == '__main__':
     assert(t_1(256,2**16) == 16)
     assert(t_2(256,2**16) == 2)
 
-    w = 2**8
+    w = 16
     mu = 2**7
-    m = 256
+    m = 512
 
-    print(t_1(m,w))
-    print(t_2(m,w))
 
     avgs = [ block_average(w, fingerprint(bytes(h))) for h in range(1000)]
     print(min(avgs), mean(avgs), max(avgs))
+    print(t_1(m,w))
+    print(t_2(m,w))
 
     #Print the min, mean and max averages for fingerprint_r
     #avgs = [ block_average(w, fingerprint_r(bytes(h), w, 1000)[0]) for h in range(1000)]

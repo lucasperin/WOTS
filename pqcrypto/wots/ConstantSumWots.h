@@ -62,10 +62,10 @@ public:
 		} else {
 			ret = this->toConstantSum(i, T, W, S);
 		}
-		//for (const auto i : ret)
-			//std::cout << i << ' ';
-		//std::cout<<std::endl;
-		return ret;
+		/*for (const auto i : ret)
+			std::cout << i << ' ';
+		std::cout<<std::endl;
+		*/return ret;
 		
 	};
 protected:
@@ -77,7 +77,7 @@ protected:
 	/*
 	 * Must be signed to asserct negative cases.
 	 */
-	mpz_class binomial(int n, int k) {
+	virtual mpz_class binomial(int n, int k) {
 		if(n < k || n<0 || k<0)
 			return 0;
 		mpz_class ret = 0;

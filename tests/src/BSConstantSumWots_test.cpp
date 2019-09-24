@@ -98,3 +98,49 @@ TEST(BSConstantSumWots_test, sign_and_verify_256_255_55_534) {
 	ASSERT_EQ(w.verify(data, sig), true);
 }
 
+
+
+
+
+TEST(BSConstantSumWots_test, fast_sign_and_verify_256_255_34_3106) {
+	BSWOTS_SHA256_255_34_3106 w;
+	w.loadKeys();
+	ByteArray data = hstoba("0102030F");
+	std::vector<ByteArray> sig = w.sign(data);
+	std::vector<unsigned int> fp = w.genFingerprint(data);
+	ASSERT_EQ(w.check_encoding(data, fp), true);
+	ASSERT_EQ(w.fast_verify(data, sig, fp), true);
+}
+
+TEST(BSConstantSumWots_test, fast_sign_and_verify_256_255_55_534) {
+	BSWOTS_SHA256_255_55_534 w;
+	w.loadKeys();
+	ByteArray data = hstoba("0102030F");
+	std::vector<ByteArray> sig = w.sign(data);
+	std::vector<unsigned int> fp = w.genFingerprint(data);
+	ASSERT_EQ(w.check_encoding(data, fp), true);
+	ASSERT_EQ(w.fast_verify(data, sig, fp), true);
+}
+
+TEST(BSConstantSumWots_test, fail_fast_sign_and_verify_256_255_34_3106) {
+	BSWOTS_SHA256_255_34_3106 w;
+	w.loadKeys();
+	ByteArray data = hstoba("0102030F");
+	std::vector<ByteArray> sig = w.sign(data);
+	std::vector<unsigned int> fp = w.genFingerprint(data);
+	fp[0]++;
+	ASSERT_EQ(w.check_encoding(data, fp), false);
+	ASSERT_EQ(w.fast_verify(data, sig, fp), false);
+}
+
+TEST(BSConstantSumWots_test, fail_fast_sign_and_verify_256_255_55_534) {
+	BSWOTS_SHA256_255_55_534 w;
+	w.loadKeys();
+	ByteArray data = hstoba("0102030F");
+	std::vector<ByteArray> sig = w.sign(data);
+	std::vector<unsigned int> fp = w.genFingerprint(data);
+	fp[0]++;
+	ASSERT_EQ(w.check_encoding(data, fp), false);
+	ASSERT_EQ(w.fast_verify(data, sig, fp), false);
+}
+

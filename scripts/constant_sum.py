@@ -134,23 +134,23 @@ def map_to_const_sum(i, blocks, maxi, block_sum=None):
 if __name__ == "__main__":
 
     # t
-    blocks = 5
+    blocks = 66
     # n
-    maxi = 20
+    maxi = 255
     # s
     block_sum = 35
 
-    tlen = T_len(blocks, maxi, block_sum)
-    print(int(tlen))
-    print(log(tlen, 2))
+    #tlen = T_len(blocks, maxi, block_sum)
+    #print(int(tlen))
+    #print(log(tlen, 2))
     #for i in range(10):
         #m = maxi + i
         #tlen = T_len(blocks, m, m)
         #print(m, log(tlen, 2))
 
-    #for i in range(1, 1000):
-    #    I = int.from_bytes(hashlib.sha256(bytes(i)).digest(), byteorder='big')
-    #    #print(map_to_const_sum(I, blocks, maxi, block_sum))
-    #    map_to_const_sum(I, blocks, maxi, block_sum)
+    for i in range(1, 1000):
+        I = int.from_bytes(hashlib.sha256(bytes(i)).digest(), byteorder='big')
+        #print(map_to_const_sum(I, blocks, maxi, block_sum))
+        map_to_const_sum(I, blocks, maxi, block_sum)
 
     print("Done!")

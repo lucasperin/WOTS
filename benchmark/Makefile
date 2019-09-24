@@ -27,6 +27,14 @@ encoding: Encoding_bench.out
 	./Encoding_bench.out
 	@echo 'Done!'
 
+plot_encoding: gen_plot Plot_Encoding_bench.out
+	./Plot_Encoding_bench.out
+	@echo 'Done!'
+
+gen_plot:
+	@python gen_plot_bench.py > src/Plot_Encoding_bench.cpp
+	@echo 'Done!'
+
 wots: ClassicWots_bench.out
 	./ClassicWots_bench.out
 	@echo 'Done!'

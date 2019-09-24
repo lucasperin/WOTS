@@ -14,6 +14,44 @@ class BSConstantSumWots : public virtual ConstantSumWots<D, W, T, S> {
 		return this->constantSumLen(blocks, max, sum);
 	};
 
+	virtual bool check_encoding(ByteArray& data, std::vector<unsigned int>& blocks) {
+		ByteArray aux = this->digest(data);
+		mpz_class I;
+		I.set_str(std::to_string(aux), 16);
+		int s = S;
+		mpz_class keep;
+		mpz_class keep2;
+		for(int r = 1; r <=T; r++) {
+			keep = rank(T-r, W, s, blocks[r-1]-1);
+			if( I < keep ) { return false; }
+			if( I > rank(T-r, W, s, blocks[r-1]) ) { return false; }
+			s -=blocks[r-1];
+			I -= keep;
+		}
+		return true;
+	};
+
+	virtual bool fast_verify(ByteArray& data, std::vector<ByteArray>& signature, std::vector<unsigned int>& blocks) {	
+		if(not this->pubKeyIsLoaded())
+			return false;
+		if(! check_encoding(data, blocks) ) 
+			return false;
+
+		ByteArray check;
+
+		//#pragma omp parallel for
+		for(long unsigned int i = 0; i < blocks.size(); i++) {
+			check += this->digestChain(signature[i], blocks[i]);
+		}
+
+		check = this->digest(check);
+		
+		//TODO( We can improve this using xor and vactor iterator)
+		if( std::to_string(this->public_key).compare(std::to_string(check)) == 0 )
+			return true;
+
+		return false;
+	};
 protected:
 
 	mpz_class rank(int blocks, int max, int sum, int j) {
