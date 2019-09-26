@@ -1,9 +1,9 @@
 from constant_sum import *
 
 if __name__ == "__main__":
-    t = 34
-    n = 255
-    s = 3106
+    t = 5
+    n = 20
+    s = 35
 
     l = (T_len(t,n,s))
     print ( "T(3,3,4) = %d"% l)
@@ -20,7 +20,8 @@ if __name__ == "__main__":
             aux = T_len(b-1, n, s- i)
             p += aux
             bjota =  bj(i, b-1, n, s)
-            print("%d\t%d\t%d\t%d\t%d"%(b-1,  s-i, aux,  p, bjota))
+            zjota =  zj(i, b-1, n, s)
+            print("%d\t%d\t%d\t%d\t%d\t%d"%(b-1,  s-i, aux,  p, bjota, zjota))
 
         print()
     

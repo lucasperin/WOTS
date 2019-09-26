@@ -44,7 +44,7 @@ public:
 
 		check = this->digest(check);
 		
-		//TODO( We can improve this using xor and vactor iterator)
+		//TODO( We can improve this using xor and  iterator)
 		if( std::to_string(this->public_key).compare(std::to_string(check)) == 0 )
 			return true;
 
@@ -52,7 +52,7 @@ public:
 	};
 
 
-	std::vector<unsigned int> genFingerprint(ByteArray& data) final {
+	virtual std::vector<unsigned int> genFingerprint(ByteArray& data) {
 		ByteArray aux = this->digest(data);
 		mpz_class i;
 		i.set_str(std::to_string(aux), 16);
@@ -62,10 +62,10 @@ public:
 		} else {
 			ret = this->toConstantSum(i, T, W, S);
 		}
-		/*for (const auto i : ret)
-			std::cout << i << ' ';
-		std::cout<<std::endl;
-		*/return ret;
+		//for (const auto i : ret)
+			//std::cout << i << ' ';
+		//std::cout<<std::endl;
+		return ret;
 		
 	};
 protected:

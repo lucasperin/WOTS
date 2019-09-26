@@ -1,4 +1,4 @@
-from math import factorial as fac, sqrt, floor, log
+from math import factorial as fac, sqrt, floor, log, ceil
 from functools import reduce, lru_cache
 import hashlib
 
@@ -89,7 +89,6 @@ def bj(j, blocks, maxi, block_sum=None):
     if block_sum is None:
         block_sum = maxi
     kmax = min(blocks, floor((block_sum) / (maxi + 1)))
-    print("kmax = %d"%kmax)
 
     t = 0
     for k in range(0, kmax + 1):
@@ -100,6 +99,31 @@ def bj(j, blocks, maxi, block_sum=None):
 
     return t
 
+def magic(j, blocks, maxi, block_sum, k):
+    """
+    This here is the equivalent to bj internal binomial difference, maybe a little faster..?
+    """
+    if (block_sum-(maxi+1)*k+blocks-1-j < blocks or blocks < 0):
+        return binomial(block_sum - (maxi + 1) * k + blocks, blocks)
+    first = binomial(block_sum - (maxi + 1) * k + blocks - 1 - j, blocks)
+    top = reduce((lambda x,y:x*y),[block_sum-(maxi+1)*k +blocks -i for i in range(0,j+1)])
+    bot =  reduce((lambda x,y:x*y),[block_sum-(maxi+1)*k -i for i in range(0,j+1)])
+    #if bot == 0:
+    #    return 10000000
+    return first*(top/bot - 1)
+
+
+def zj(j, blocks, maxi, block_sum=None):
+    assert j >= 0
+    if block_sum is None:
+        block_sum = maxi
+    kmax = min(blocks, floor((block_sum) / (maxi + 1)))
+
+    t = 0
+    for k in range(0, kmax + 1):
+        t+= ((-1)**k) * binomial(blocks, k)*magic(j,blocks,maxi,block_sum, k)
+
+    return t
 
 def original_map_to_const_sum(i, blocks, maxi):
     if blocks is 1:

@@ -54,7 +54,7 @@ class BSConstantSumWots : public virtual ConstantSumWots<D, W, T, S> {
 	};
 protected:
 
-	mpz_class rank(int blocks, int max, int sum, int j) {
+	virtual mpz_class rank(int blocks, int max, int sum, int j) {
 		mpz_class ret = 0;
 		int aux = floor(float(sum)/float(max+1));
 		int kmax = std::min(blocks, aux);

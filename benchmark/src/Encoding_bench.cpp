@@ -1,8 +1,10 @@
 #include <benchmark/benchmark.h>
 #include "wots/ClassicWots.h"
 #include "wots/ConstantSumWots.h"
+#include "wots/VariantConstantSumWots.h"
 #include "wots/MConstantSumWots.h"
 #include "wots/BSConstantSumWots.h"
+#include "wots/OBSConstantSumWots.h"
 #include "wots/DynamicCacheConstantSumWots.h"
 #include "wots/RunLengthOTS.h"
 #include "primitives/OpenSSLSha256.h"
@@ -10,12 +12,22 @@
 
 using OCS_34  = ConstantSumWots<OpenSSLSha256,2832,34,2832>;
 using OCS_55  = ConstantSumWots<OpenSSLSha256,534,55,534>;
+using VCS_34   = VariantConstantSumWots<OpenSSLSha256,300,34,3106>;
+using VCS_55   = VariantConstantSumWots<OpenSSLSha256,255,55,534>;
+using VCS_55_63= VariantConstantSumWots<OpenSSLSha256,63,55,534>;
+using VCS_55_31= VariantConstantSumWots<OpenSSLSha256,31,55,534>;
+
+
 using CS_34   = ConstantSumWots<OpenSSLSha256,255,34,3106>;
 using CS_55   = ConstantSumWots<OpenSSLSha256,255,55,534>;
+using CS_55_63= ConstantSumWots<OpenSSLSha256,63,55,535>;
+using CS_55_31= ConstantSumWots<OpenSSLSha256,31,55,581>;
 using MCS_34  = MConstantSumWots<OpenSSLSha256,255,34,3106>;
 using MCS_55  = MConstantSumWots<OpenSSLSha256,255,55,534>;
 using BSCS_34 = BSConstantSumWots<OpenSSLSha256,255,34,3106>;
 using BSCS_55 = BSConstantSumWots<OpenSSLSha256,255,55,534>;
+using OBSCS_34= OBSConstantSumWots<OpenSSLSha256,255,34,3106>;
+using OBSCS_55= OBSConstantSumWots<OpenSSLSha256,255,55,534>;
 using DCCS_34 = DynamicCacheConstantSumWots<OpenSSLSha256,255,34,3106>;
 using DCCS_55 = DynamicCacheConstantSumWots<OpenSSLSha256,255,55,534>;
 
@@ -92,6 +104,41 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_55_534, OCS_55)(benchmark::State& 
 }
 
 
+// VARIANT ONSTANT SUM ENCODING
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_300_34_3106_V, VCS_34)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_55_534_V, VCS_55)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
+
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_63_55_534_V, VCS_55_63)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
+
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_31_55_534_V, VCS_55_31)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
 
 // CONSTANT SUM ENCODING
 
@@ -111,6 +158,21 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_55_534, CS_55)(benchmark::Stat
 	}
 }
 
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_61_55_535, CS_55_63)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_31_55_581, CS_55_31)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
 
 //MEMOIZED CONSTANT SUM ENCODING
 
@@ -131,7 +193,7 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_55_534_M, MCS_55)(benchmark::S
 }
 
 
-//Memoized Binary Search CONSTANT SUM ENCODING
+//Binary Search CONSTANT SUM ENCODING
 
 BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_34_3106_BS, BSCS_34)(benchmark::State& state) {
 	std::vector<unsigned int> a;
@@ -148,6 +210,26 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_55_534_BS, BSCS_55)(benchmark:
 		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
 	}
 }
+
+// Optimized(?)Binary Search CONSTANT SUM ENCODING
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_34_3106_OBS, OBSCS_34)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_256_255_55_534_OBS, OBSCS_55)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		data = digest(data);
+		benchmark::DoNotOptimize(a = ots.genFingerprint(data));
+	}
+}
+
+
 
 //DYNAMIC CACHE CONSTANT SUM ENCODING
 
@@ -246,5 +328,47 @@ BENCHMARK_TEMPLATE_F(OTSFixture, ENCODING_512_15_131_845_BS, BSCS_131_512)(bench
 	}
 }
 
+//CHECK ENCODING 
+
+template<class OTS>
+class OTSFixture2 : public benchmark::Fixture, protected OpenSSLSha256 {
+public:
+	ByteArray data;
+	OTS ots;
+	std::vector<unsigned int> fp;
+	virtual void SetUp(benchmark::State& state) {
+		data = hstoba("0102030F");
+		fp = ots.genFingerprint(data);
+	}
+};
+
+BENCHMARK_TEMPLATE_F(OTSFixture2, CHECK_ENCODING_256_255_34_3106_BS, BSCS_34)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		benchmark::DoNotOptimize(ots.check_encoding(data, fp));
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture2, CHWCK_ENCODING_256_255_55_534_BS, BSCS_55)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		benchmark::DoNotOptimize(ots.check_encoding(data, fp));
+	}
+}
+
+
+BENCHMARK_TEMPLATE_F(OTSFixture2, CHECK_ENCODING_512_255_66_6769_BS, BSCS_66_512)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		benchmark::DoNotOptimize(ots.check_encoding(data, fp));
+	}
+}
+
+BENCHMARK_TEMPLATE_F(OTSFixture2, CHECK_ENCODING_512_15_131_845_BS, BSCS_131_512)(benchmark::State& state) {
+	std::vector<unsigned int> a;
+	for (auto _ : state){
+		benchmark::DoNotOptimize(ots.check_encoding(data, fp));
+	}
+}
 
 BENCHMARK_MAIN();
