@@ -64,10 +64,15 @@ if __name__ == '__main__':
     m = 512
 
 
-    avgs = [ block_average(w, fingerprint(bytes(h))) for h in range(1000)]
-    print(min(avgs), mean(avgs), max(avgs))
-    print(t_1(m,w))
-    print(t_2(m,w))
+    for w in [16, 256]:
+        for m in [256, 512]:
+            t = t_1(m,w)+t_2(m,w)
+            print(w, m, t, t*(w - 1), t*(w-1)/2)
+
+    #avgs = [ block_average(w, fingerprint(bytes(h))) for h in range(1000)]
+    #print(min(avgs), mean(avgs), max(avgs))
+    #print(t_1(m,w))
+    #print(t_2(m,w))
 
     #Print the min, mean and max averages for fingerprint_r
     #avgs = [ block_average(w, fingerprint_r(bytes(h), w, 1000)[0]) for h in range(1000)]

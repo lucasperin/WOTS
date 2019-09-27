@@ -12,6 +12,7 @@ public:
 		mpz_class i;
 		i.set_str(std::to_string(aux), 16);
 		std::vector<unsigned int> ret;
+		int timeout = 20;
 		if(W==S) {
 			ret = this->toConstantSumOriginal(i, T, S);
 		} else {
@@ -19,7 +20,12 @@ public:
 				aux = this->digest(aux);
 				i.set_str(std::to_string(aux), 16);
 				ret = this->toConstantSum(i, T, S);
-			}while(ret.size() <T);
+				timeout++;
+			}while(ret.size() <T && timeout < 20);
+		}
+		if(timeout>=20){
+			std::cout << "e";
+			return {};
 		}
 		//for (const auto i : ret)
 			//std::cout << i << ' ';
