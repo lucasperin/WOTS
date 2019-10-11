@@ -6,7 +6,7 @@ template <class D, int W, int T, int S>
 class CachedConstantSumWots : public virtual ConstantSumWots<D, W, T, S> {
 public:
 	CachedConstantSumWots() noexcept {};
-	CachedConstantSumWots(const ByteArray& seed) noexcept : ConstantSumWots<D,W,T,S>(W,seed) {};
+	CachedConstantSumWots(const ByteArray& seed) noexcept : ConstantSumWots<D,W,T,S>(seed) {};
 
 	const std::vector<ByteArray> sign(ByteArray& data) {
 		std::vector<unsigned int> blocks = this->genFingerprint(data);

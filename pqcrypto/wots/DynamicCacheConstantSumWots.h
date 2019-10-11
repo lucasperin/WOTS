@@ -7,10 +7,10 @@ template <class D, int W, int T, int S>
 class DynamicCacheConstantSumWots : public virtual BSConstantSumWots<D, W, T, S> {
 public:
 	DynamicCacheConstantSumWots() noexcept {};
-	DynamicCacheConstantSumWots(const ByteArray& seed) noexcept : BSConstantSumWots<D,W,T,S>(W,seed) {};
+	DynamicCacheConstantSumWots(const ByteArray& seed) noexcept : BSConstantSumWots<D,W,T,S>(seed) {};
 	virtual ~DynamicCacheConstantSumWots() noexcept {
-		std::cout << "Cache length = " << this->len << std::endl;
-		std::cout << "Cache hits = " << this->hits << std::endl;
+		//std::cout << "Cache length = " << this->len << std::endl;
+		//std::cout << "Cache hits = " << this->hits << std::endl;
 	};
 
 protected:

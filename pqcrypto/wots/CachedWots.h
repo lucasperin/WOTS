@@ -6,7 +6,7 @@ template <class D, int W>
 class CachedWots : public virtual ClassicWots<D,W> {
 public:
 	CachedWots() noexcept {};
-	CachedWots(const ByteArray& seed) noexcept : ClassicWots<D,W>(W,seed) {};
+	CachedWots(const ByteArray& seed) noexcept : ClassicWots<D,W>(seed) {};
 	
 	const std::vector<ByteArray> sign(ByteArray& data) final {
 		std::vector<unsigned int> blocks = this->genFingerprint(data);

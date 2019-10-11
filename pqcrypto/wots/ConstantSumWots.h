@@ -9,7 +9,7 @@ template <class D, int W, int T, int S>
 class ConstantSumWots : public virtual ClassicWots<D,W> {
 public:
 	ConstantSumWots() noexcept {};
-	ConstantSumWots(const ByteArray& seed) noexcept : ClassicWots<D,W>(W,seed) {};
+	ConstantSumWots(const ByteArray& seed) noexcept : ClassicWots<D,W>(seed) {};
 	const unsigned int t1() const noexcept final {return T;};
 	const unsigned int t2() const noexcept final {return 0;};
 	const std::vector<unsigned int> checksum(std::vector<unsigned int>& blocks)  final {
@@ -57,11 +57,7 @@ public:
 		mpz_class i;
 		i.set_str(std::to_string(aux), 16);
 		std::vector<unsigned int> ret;
-		if(W==S) {
-			ret = this->toConstantSumOriginal(i, T, S);
-		} else {
-			ret = this->toConstantSum(i, T, W, S);
-		}
+		ret = this->toConstantSum(i, T, W, S);
 		//for (const auto i : ret)
 			//std::cout << i << ' ';
 		//std::cout<<std::endl;
@@ -117,30 +113,6 @@ protected:
 		std::vector<unsigned int> ret = {k};
 		i -= left;
 		std::vector<unsigned int> ret2 = toConstantSum(i, blocks - 1, max, sum-k);
-		ret.insert(ret.end(), ret2.begin(), ret2.end());
-		return ret;
-	}
-
-	/*
-	 * Original implementation from paper.
-	 */
-	virtual std::vector<unsigned int> toConstantSumOriginal(mpz_class& i, int blocks, int sum) 
-	{
-		if (blocks == 1)
-			return {(unsigned)sum};
-		unsigned int k = 0;
-		mpz_class a = 1;
-		mpz_class left = 0;
-		mpz_class right = a;
-		while ( !(i>= left && i < right) ) {
-			k++; 
-			a = a*(k+blocks-2)/k;
-			left=right;
-			right += a;
-		}
-		std::vector<unsigned int> ret = {sum-k};
-		i -= left;
-		std::vector<unsigned int> ret2 = toConstantSumOriginal(i, blocks - 1, k);
 		ret.insert(ret.end(), ret2.begin(), ret2.end());
 		return ret;
 	}

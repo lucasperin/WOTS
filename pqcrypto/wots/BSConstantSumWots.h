@@ -6,6 +6,10 @@
 template <class D, int W, int T, int S>
 class BSConstantSumWots : public virtual ConstantSumWots<D, W, T, S> {
 	public:
+
+	BSConstantSumWots() noexcept {};
+	BSConstantSumWots(const ByteArray& seed) noexcept : ConstantSumWots<D,W,T,S>(seed) {};
+	
 	mpz_class prank(int blocks, int max, int sum, int j) {
 		return this->rank(blocks, max, sum, j);
 	};

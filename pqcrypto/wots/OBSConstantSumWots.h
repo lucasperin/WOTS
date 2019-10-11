@@ -5,7 +5,7 @@ template <class D, int W, int T, int S>
 class OBSConstantSumWots : public virtual BSConstantSumWots<D, W, T, S> {
 public:
 	OBSConstantSumWots() noexcept {};
-	OBSConstantSumWots(const ByteArray& seed) noexcept : BSConstantSumWots<D,W,T,S>(W,seed) {};
+	OBSConstantSumWots(const ByteArray& seed) noexcept : BSConstantSumWots<D,W,T,S>(seed) {};
 
 protected:
 
