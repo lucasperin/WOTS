@@ -1,6 +1,7 @@
 #include <benchmark/benchmark.h>
 #include "wots/ClassicWots.h"
 #include "wots/ConstantSumWots.h"
+#include "wots/OriginalConstantSumWots.h"
 #include "wots/VariantConstantSumWots.h"
 #include "wots/MConstantSumWots.h"
 #include "wots/BSConstantSumWots.h"
@@ -10,8 +11,8 @@
 #include "primitives/OpenSSLSha256.h"
 #include "primitives/OpenSSLSha512.h"
 
-using OCS_34  = ConstantSumWots<OpenSSLSha256,2832,34,2832>;
-using OCS_55  = ConstantSumWots<OpenSSLSha256,534,55,534>;
+using OCS_34  = OriginalConstantSumWots<OpenSSLSha256,2832,34,2832>;
+using OCS_55  = OriginalConstantSumWots<OpenSSLSha256,534,55,534>;
 using VCS_34   = VariantConstantSumWots<OpenSSLSha256,300,34,3106>;
 using VCS_55   = VariantConstantSumWots<OpenSSLSha256,255,55,534>;
 using VCS_55_63= VariantConstantSumWots<OpenSSLSha256,63,55,534>;
@@ -32,8 +33,8 @@ using DCCS_34 = DynamicCacheConstantSumWots<OpenSSLSha256,255,34,3106>;
 using DCCS_55 = DynamicCacheConstantSumWots<OpenSSLSha256,255,55,534>;
 
 
-using OCS_66_512   = ConstantSumWots<OpenSSLSha512,6769,66,6769>;
-using OCS_131_512  = ConstantSumWots<OpenSSLSha512,845,131,845>;
+using OCS_66_512   = OriginalConstantSumWots<OpenSSLSha512,6769,66,6769>;
+using OCS_131_512  = OriginalConstantSumWots<OpenSSLSha512,845,131,845>;
 using CS_66_512    = ConstantSumWots<OpenSSLSha512,255,66,6769>;
 using CS_131_512   = ConstantSumWots<OpenSSLSha512,15,131,845>;
 using MCS_66_512   = MConstantSumWots<OpenSSLSha512,255,66,6769>;

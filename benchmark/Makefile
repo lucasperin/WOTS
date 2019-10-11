@@ -27,7 +27,11 @@ encoding: Encoding_bench.out
 	./Encoding_bench.out
 	@echo 'Done!'
 
-plot_encoding: gen_plot Plot_Encoding_bench.out
+binomials: binomials_bench.out
+	./binomials_bench.out
+	@echo 'Done!'
+
+plot_encoding: Plot_Encoding_bench.out
 	./Plot_Encoding_bench.out
 	@echo 'Done!'
 

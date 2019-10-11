@@ -125,6 +125,29 @@ def zj(j, blocks, maxi, block_sum=None):
 
     return t
 
+def muj(j, blocks, maxi, block_sum=None):
+    """
+    New Bk algorithm, returning boundries for mapping integers
+    into constant sum blocks
+    @param blocks is the number of blocks the map has
+    @param maxi is the largest integer inside a block (0, ..., maxi)
+    @param block_sum is the sum of the blocks
+    """
+    assert j >= 0
+    if block_sum is None:
+        block_sum = maxi
+    kmax = min(blocks, floor((block_sum) / (maxi + 1)))
+
+    t = 0
+    for k in range(0, kmax + 1):
+        t+= ((-1)**k) * binomial(blocks, k) * (
+              binomial(block_sum - (maxi + 1) * k + blocks, blocks)
+            - binomial(block_sum - (maxi + 1) * k + blocks - 1 - j, blocks)
+        )
+
+    return t
+
+
 def original_map_to_const_sum(i, blocks, maxi):
     if blocks is 1:
         return [maxi]
