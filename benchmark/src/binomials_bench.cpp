@@ -5,9 +5,11 @@
 
 
 static mpz_class binomial(int n, int k) {
-		mpz_class ret = 0;
-		mpz_bin_uiui(ret.get_mpz_t(), n, k);
-		return ret;
+	if(n < k || n<0 || k<0)
+		return 0;
+	mpz_class ret = 0;
+	mpz_bin_uiui(ret.get_mpz_t(), n, k);
+	return ret;
 }
 
 static void common_binomial(benchmark::State& state) {
@@ -53,6 +55,10 @@ static void fast_binomial2(benchmark::State& state) {
 		benchmark::ClobberMemory();
 	}
 }
+
+//////////////////////////////////////
+
+
 
 BENCHMARK(common_binomial)->Ranges({{40,60},{3,6}});
 BENCHMARK(fast_binomial)->Ranges({{40,60},{3,6}});

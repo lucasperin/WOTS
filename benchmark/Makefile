@@ -31,6 +31,10 @@ binomials: binomials_bench.out
 	./binomials_bench.out
 	@echo 'Done!'
 
+alg: Algorithms_bench.out
+	./Algorithms_bench.out
+	@echo 'Done!'
+
 plot_encoding: Plot_Encoding_bench.out
 	./Plot_Encoding_bench.out
 	@echo 'Done!'
