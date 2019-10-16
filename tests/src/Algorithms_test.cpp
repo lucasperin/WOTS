@@ -1,18 +1,8 @@
+#include "gtest/gtest.h"
+#include <primitives/OpenSSLSha256.h>
 #include <math.h>
 #include <gmpxx.h>
-#include <benchmark/benchmark.h>
 #include <iostream>
-#include "primitives/OpenSSLSha256.h"
-
-class BinFixture : public benchmark::Fixture, protected OpenSSLSha256{
-public:
-	ByteArray data;
-	mpz_class I;
-	void SetUp(const ::benchmark::State& state) {
-		this->data = hstoba("0102030F");
-		this->data = digest(data);
-	}
-};
 
 static mpz_class binomial(int n, int k) {
 	if(n < k || n<0 || k<0)
@@ -21,7 +11,6 @@ static mpz_class binomial(int n, int k) {
 	mpz_bin_uiui(ret.get_mpz_t(), n, k);
 	return ret;
 }
-
 
 static std::vector<unsigned int> toConstantSumOriginal(mpz_class& i, 
 		int blocks, int max, int sum) 
@@ -113,6 +102,7 @@ static std::vector<unsigned int> toConstantSumOriginalInvertedOpt(mpz_class& i,
 	return ret;
 }
 
+
 static mpz_class constantSumLen(int blocks, int max, int sum) {
 	//TODO
 	//Assert ret >= 0
@@ -165,105 +155,83 @@ static std::vector<unsigned int> toConstantSumInverted(mpz_class& i,
 	return ret;
 }
 
-BENCHMARK_DEFINE_F(BinFixture, BinomialEncoding_Original)(benchmark::State& st) {
-	int t = st.range(0);
-	int n = st.range(1);
-	int s = st.range(2);
-	std::vector<unsigned int> ret;
-	for (auto _ : st) {
-		data = digest(data);
-		I.set_str(std::to_string(data), 16);
-		benchmark::DoNotOptimize(ret = toConstantSumOriginal(I,t,n,s));
-		benchmark::ClobberMemory();
-	}
+
+TEST(AlgorithmsTest, BinomialEncoding_Original) {
+	OpenSSLSha256 md;
+	ByteArray data;
+	mpz_class I;
+	data = hstoba("12345678AAFF");
+	data = md.digest(data);
+	I.set_str(std::to_string(data), 16);
+	std::vector<unsigned int> ret = toConstantSumOriginal(I,56,510,510);
+	for(auto e : ret)
+		std::cout << e << " ";
+	std::cout << std::endl << ret.size() << std::endl<< std::flush;
 }
 
-BENCHMARK_DEFINE_F(BinFixture, BinomialEncoding_OriginalBin)(benchmark::State& st) {
-	int t = st.range(0);
-	int n = st.range(1);
-	int s = st.range(2);
-	std::vector<unsigned int> ret;
-	for (auto _ : st) {
-		data = digest(data);
-		I.set_str(std::to_string(data), 16);
-		benchmark::DoNotOptimize(ret = toConstantSumOriginalBin(I,t,n,s));
-		benchmark::ClobberMemory();
-	}
+TEST(AlgorithmsTest, BinomialEncoding_OriginalBin){
+	OpenSSLSha256 md;
+	ByteArray data;
+	mpz_class I;
+	data = hstoba("12345678AAFF");
+	data = md.digest(data);
+	I.set_str(std::to_string(data), 16);
+	std::vector<unsigned int> ret = toConstantSumOriginalBin(I,56,510,510);
+	for(auto e : ret)
+		std::cout << e << " ";
+	std::cout << std::endl << ret.size() << std::endl<< std::flush;
 }
 
-BENCHMARK_DEFINE_F(BinFixture, BinomialEncoding_OriginalInverted)(benchmark::State& st) {
-	int t = st.range(0);
-	int n = st.range(1);
-	int s = st.range(2);
-	std::vector<unsigned int> ret;
-	for (auto _ : st) {
-		data = digest(data);
-		I.set_str(std::to_string(data), 16);
-		benchmark::DoNotOptimize(ret = toConstantSumOriginalInverted(I,t,n,s));
-		benchmark::ClobberMemory();
-	}
+TEST(AlgorithmsTest, BinomialEncoding_Inverted){
+	OpenSSLSha256 md;
+	ByteArray data;
+	mpz_class I;
+	data = hstoba("12345678AAFF");
+	data = md.digest(data);
+	I.set_str(std::to_string(data), 16);
+	std::vector<unsigned int> ret = toConstantSumInverted(I,56,510,510);
+	for(auto e : ret)
+		std::cout << e << " ";
+	std::cout << std::endl << ret.size() << std::endl<< std::flush;
 }
 
-BENCHMARK_DEFINE_F(BinFixture, BinomialEncoding_OriginalInvertedOpt)(benchmark::State& st) {
-	int t = st.range(0);
-	int n = st.range(1);
-	int s = st.range(2);
-	std::vector<unsigned int> ret;
-	for (auto _ : st) {
-		data = digest(data);
-		I.set_str(std::to_string(data), 16);
-		benchmark::DoNotOptimize(ret = toConstantSumOriginalInvertedOpt(I,t,n,s));
-		benchmark::ClobberMemory();
-	}
+TEST(AlgorithmsTest, BinomialEncoding_OriginalInverted){
+	OpenSSLSha256 md;
+	ByteArray data;
+	mpz_class I;
+	data = hstoba("12345678AAFF");
+	data = md.digest(data);
+	I.set_str(std::to_string(data), 16);
+	std::vector<unsigned int> ret = toConstantSumOriginalInverted(I,56,510,510);
+	for(auto e : ret)
+		std::cout << e << " ";
+	std::cout << std::endl << ret.size() << std::endl<< std::flush;
+}
+
+TEST(AlgorithmsTest, BinomialEncoding_OriginalInvertedOpt){
+	OpenSSLSha256 md;
+	ByteArray data;
+	mpz_class I;
+	data = hstoba("12345678AAFF");
+	data = md.digest(data);
+	I.set_str(std::to_string(data), 16);
+	std::vector<unsigned int> ret = toConstantSumOriginalInvertedOpt(I,56,510,510);
+	for(auto e : ret)
+		std::cout << e << " ";
+	std::cout << std::endl << ret.size() << std::endl<< std::flush;
+}
+
+TEST(AlgorithmsTest, BinomialEncoding_General){
+	OpenSSLSha256 md;
+	ByteArray data;
+	mpz_class I;
+	data = hstoba("12345678AAFF");
+	data = md.digest(data);
+	I.set_str(std::to_string(data), 16);
+	std::vector<unsigned int> ret = toConstantSum(I,56,510,510);
+	for(auto e : ret)
+		std::cout << e << " ";
+	std::cout << std::endl << ret.size() << std::endl<< std::flush;
 }
 
 
-BENCHMARK_DEFINE_F(BinFixture, BinomialEncoding_General)(benchmark::State& st) {
-	int t = st.range(0);
-	int n = st.range(1);
-	int s = st.range(2);
-	std::vector<unsigned int> ret;
-	for (auto _ : st) {
-		data = digest(data);
-		I.set_str(std::to_string(data), 16);
-		benchmark::DoNotOptimize(ret = toConstantSum(I,t,n,s));
-		benchmark::ClobberMemory();
-	}
-}
-
-BENCHMARK_DEFINE_F(BinFixture, BinomialEncoding_Inverted)(benchmark::State& st) {
-	int t = st.range(0);
-	int n = st.range(1);
-	int s = st.range(2);
-	std::vector<unsigned int> ret;
-	for (auto _ : st) {
-		data = digest(data);
-		I.set_str(std::to_string(data), 16);
-		benchmark::DoNotOptimize(ret = toConstantSumInverted(I,t,n,s));
-		benchmark::ClobberMemory();
-	}
-}
-
-
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalBin)->Args({56,510,510});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_Original)->Args({56,510,510});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalInverted)->Args({56,510,510});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalInvertedOpt)->Args({56,510,510});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_Inverted)->Args({56,510,510});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_General)->Args({56,510,510});
-
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalBin)->Args({70,313,313});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_Original)->Args({70,313,313});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalInverted)->Args({70,313,313});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalInvertedOpt)->Args({70,313,313});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_Inverted)->Args({70,313,313});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_General)->Args( {70,313,313});
-
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalBin)->Args({84,228,228});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_Original)->Args({84,228,228});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalInverted)->Args({84,228,228});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_OriginalInvertedOpt)->Args({84,228,228});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_Inverted)->Args({84,228,228});
-BENCHMARK_REGISTER_F(BinFixture, BinomialEncoding_General)->Args( {84,228,228});
-
-BENCHMARK_MAIN();
