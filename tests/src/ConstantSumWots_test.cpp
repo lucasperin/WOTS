@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "wots/ConstantSumWots.h"
 #include "wots/OriginalConstantSumWots.h"
+#include "wots/OriginalOptConstantSumWots.h"
 #include "wots/VariantConstantSumWots.h"
 #include "wots/CachedConstantSumWots.h"
 #include "wots/DynamicCacheConstantSumWots.h"
@@ -18,6 +19,9 @@ using DCWOTS_SHA256_255_34_3106 = DynamicCacheConstantSumWots<OpenSSLSha256,255,
 //Original
 using WOTS_SHA256_34_2832 =  OriginalConstantSumWots<OpenSSLSha256,2832,34,2832>;
 using WOTS_SHA256_55_534 =   OriginalConstantSumWots<OpenSSLSha256,534,55,534>;
+//Original
+using WOTS_SHA256_34_2832_OPT =  OriginalOptConstantSumWots<OpenSSLSha256,2832,34,2832>;
+using WOTS_SHA256_55_534_OPT =   OriginalOptConstantSumWots<OpenSSLSha256,534,55,534>;
 // Variant
 using VWOTS_SHA256_255_34_3106 = VariantConstantSumWots<OpenSSLSha256,300,34,3106>;
 using VWOTS_SHA256_255_55_534 = VariantConstantSumWots<OpenSSLSha256,31,55,534>;
@@ -43,6 +47,14 @@ TEST(ConstantSumWots_test, constructor_256_34_2832) {
 	ASSERT_EXIT(
 	{
 	{WOTS_SHA256_34_2832 w;}
+	exit(0);
+	},::testing::ExitedWithCode(0),".*");
+}
+
+TEST(ConstantSumWots_test, constructor_256_34_2832_OPT) {
+	ASSERT_EXIT(
+	{
+	{WOTS_SHA256_34_2832_OPT w;}
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
 }
@@ -74,6 +86,14 @@ TEST(ConstantSumWots_test, load_private_key_256_255_34_3106_C) {
 TEST(ConstantSumWots_test, load_private_key_256_34_2832) {
 	ASSERT_EXIT( {
 	WOTS_SHA256_34_2832 w;
+	w.loadPrivateKey();
+	exit(0);
+	},::testing::ExitedWithCode(0),".*");
+}
+
+TEST(ConstantSumWots_test, load_private_key_256_34_2832_OPT) {
+	ASSERT_EXIT( {
+	WOTS_SHA256_34_2832_OPT w;
 	w.loadPrivateKey();
 	exit(0);
 	},::testing::ExitedWithCode(0),".*");
@@ -111,6 +131,14 @@ TEST(ConstantSumWots_test, load_keys_256_34_2832) {
 	},::testing::ExitedWithCode(0),".*");
 }
 
+TEST(ConstantSumWots_test, load_keys_256_34_2832_OPT) {
+	ASSERT_EXIT( {
+	WOTS_SHA256_34_2832_OPT w;
+	w.loadKeys();
+	exit(0);
+	},::testing::ExitedWithCode(0),".*");
+}
+
 TEST(ConstantSumWots_test, load_keys_256_255_55_534) {
 	ASSERT_EXIT( {
 	WOTS_SHA256_255_55_534 w;
@@ -128,6 +156,13 @@ TEST(ConstantSumWots_test, sign_256_255_34_3106) {
 
 TEST(ConstantSumWots_test, sign_256_34_2832) {
 	WOTS_SHA256_34_2832 w;
+	w.loadKeys();
+	ByteArray data = hstoba("0102030F");
+	std::vector<ByteArray> sig = w.sign(data);
+}
+
+TEST(ConstantSumWots_test, sign_256_34_2832_OPT) {
+	WOTS_SHA256_34_2832_OPT w;
 	w.loadKeys();
 	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = w.sign(data);
@@ -186,8 +221,24 @@ TEST(ConstantSumWots_test, sign_and_verify_256_34_2832) {
 	ASSERT_EQ(w.verify(data, sig), true);
 }
 
+TEST(ConstantSumWots_test, sign_and_verify_256_34_2832_OPT) {
+	WOTS_SHA256_34_2832_OPT w;
+	w.loadKeys();
+	ByteArray data = hstoba("0102030F");
+	std::vector<ByteArray> sig = w.sign(data);
+	ASSERT_EQ(w.verify(data, sig), true);
+}
+
 TEST(ConstantSumWots_test, sign_and_verify_256_55_534) {
 	WOTS_SHA256_55_534 w;
+	w.loadKeys();
+	ByteArray data = hstoba("0102030F");
+	std::vector<ByteArray> sig = w.sign(data);
+	ASSERT_EQ(w.verify(data, sig), true);
+}
+
+TEST(ConstantSumWots_test, sign_and_verify_256_55_534_OPT) {
+	WOTS_SHA256_55_534_OPT w;
 	w.loadKeys();
 	ByteArray data = hstoba("0102030F");
 	std::vector<ByteArray> sig = w.sign(data);
